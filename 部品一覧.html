@@ -1,0 +1,1387 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Afuro VBA Toolbox 部品一覧</title><style>body{margin:0;background:#f5f6f8;color:#222;font:16px/1.65 system-ui,sans-serif}header,main{max-width:1040px;margin:auto;padding:24px}header{position:sticky;top:0;background:#f5f6f8ee;backdrop-filter:blur(8px);z-index:1}h1{font-size:26px;margin:0}h2{font-size:19px;margin:4px 0}input{width:100%;box-sizing:border-box;padding:13px;font:inherit;border:1px solid #aaa;border-radius:8px}#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}article{padding:22px;background:white;border:1px solid #ddd;border-radius:10px;min-width:0}pre{font:13px/1.6 Consolas,monospace;background:#f2f4f7;padding:12px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.category{color:#165e8a;font-size:13px;font-weight:600}.muted{font-size:12px;color:#666}a{color:#165e8a}button{border:1px solid #b9c6d0;background:#edf4fa;padding:8px 12px;border-radius:5px;cursor:pointer}summary{cursor:pointer;margin:14px 0}#status{margin:8px 0}article[hidden]{display:none}</style><header><h1>Afuro VBA Toolbox</h1><p>必要な部品を検索して、自分のマクロへ取り込む。<a href="README.md">使い方</a></p><input aria-label="部品を検索" placeholder="例：罫線、コード、CSV、日付、辞書"><p id="status"></p></header><main><div id="grid"><article data-search="配列 mdlAT_Array AT_ArrayLength 1次元配列の要素数を取得する。空・未初期化なら0">
+<span class="category">配列</span><h2>AT_ArrayLength</h2><p>1次元配列の要素数を取得する。空・未初期化なら0</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">count = AT_ArrayLength(Array(&quot;A&quot;, &quot;B&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ArrayLength(ByVal values As Variant) As Long
+    If Not IsArray(values) Then Err.Raise 5, &quot;AT_ArrayLength&quot;, &quot;Array is required.&quot;
+    On Error GoTo EmptyArray
+    AT_ArrayLength = UBound(values) - LBound(values) + 1
+EmptyArray:
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_CollectionToArray Collectionを0始まりの配列にする">
+<span class="category">配列</span><h2>AT_CollectionToArray</h2><p>Collectionを0始まりの配列にする</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">values = AT_CollectionToArray(items)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CollectionToArray(ByVal items As Collection) As Variant
+    Dim result() As Variant, i As Long
+    If items.Count = 0 Then AT_CollectionToArray = Array(): Exit Function
+    ReDim result(0 To items.Count - 1)
+    For i = 1 To items.Count
+        If IsObject(items(i)) Then Set result(i - 1) = items(i) Else result(i - 1) = items(i)
+    Next i
+    AT_CollectionToArray = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_UniqueValues 1次元配列から重複を除く。文字列として比較する">
+<span class="category">配列</span><h2>AT_UniqueValues</h2><p>1次元配列から重複を除く。文字列として比較する</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">unique = AT_UniqueValues(Array(&quot;A&quot;, &quot;a&quot;, &quot;B&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_UniqueValues(ByVal values As Variant, Optional ByVal matchCase As Boolean = False) As Variant
+    Dim dictionary As Object, item As Variant, key As String
+    Set dictionary = CreateObject(&quot;Scripting.Dictionary&quot;)
+    If matchCase Then dictionary.CompareMode = vbBinaryCompare Else dictionary.CompareMode = vbTextCompare
+    For Each item In values
+        If IsError(item) Or IsNull(item) Or IsObject(item) Or IsArray(item) Then Err.Raise 5, &quot;AT_UniqueValues&quot;, &quot;Use scalar non-error values.&quot;
+        key = CStr(item)
+        If Not dictionary.Exists(key) Then dictionary.Add key, item
+    Next item
+    AT_UniqueValues = dictionary.Items
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_FilterNonEmpty 1次元配列から空文字・Empty・Nullだけを除く。0は残す">
+<span class="category">配列</span><h2>AT_FilterNonEmpty</h2><p>1次元配列から空文字・Empty・Nullだけを除く。0は残す</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">values = AT_FilterNonEmpty(Array(&quot;&quot;, 0, &quot;A&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FilterNonEmpty(ByVal values As Variant) As Variant
+    Dim items As New Collection, item As Variant
+    For Each item In values
+        If IsError(item) Then
+            items.Add item
+        ElseIf Not IsNull(item) And Not IsEmpty(item) Then
+            If CStr(item) &lt;&gt; &quot;&quot; Then items.Add item
+        End If
+    Next item
+    AT_FilterNonEmpty = AT_CollectionToArray(items)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_TransposeMatrix 2次元配列を転置する。出力は1始まり">
+<span class="category">配列</span><h2>AT_TransposeMatrix</h2><p>2次元配列を転置する。出力は1始まり</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">transposed = AT_TransposeMatrix(data)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_TransposeMatrix(ByVal data As Variant) As Variant
+    Dim result() As Variant, row As Long, column As Long, firstRow As Long, firstColumn As Long
+    firstRow = LBound(data, 1): firstColumn = LBound(data, 2)
+    ReDim result(1 To UBound(data, 2) - firstColumn + 1, 1 To UBound(data, 1) - firstRow + 1)
+    For row = firstRow To UBound(data, 1)
+        For column = firstColumn To UBound(data, 2)
+            result(column - firstColumn + 1, row - firstRow + 1) = data(row, column)
+        Next column
+    Next row
+    AT_TransposeMatrix = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_MatrixColumn 2次元配列から1列を取り出す。出力は1始まり">
+<span class="category">配列</span><h2>AT_MatrixColumn</h2><p>2次元配列から1列を取り出す。出力は1始まり</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">codes = AT_MatrixColumn(data, 1)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_MatrixColumn(ByVal data As Variant, ByVal column As Long) As Variant
+    Dim result() As Variant, row As Long, first As Long
+    If column &lt; LBound(data, 2) Or column &gt; UBound(data, 2) Then Err.Raise 5, &quot;AT_MatrixColumn&quot;, &quot;Invalid column.&quot;
+    first = LBound(data, 1)
+    ReDim result(1 To UBound(data, 1) - first + 1)
+    For row = first To UBound(data, 1)
+        result(row - first + 1) = data(row, column)
+    Next row
+    AT_MatrixColumn = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="配列 mdlAT_Array AT_FilterMatrix 2次元配列の指定列がキーと一致する行だけを返す。該当なしはEmpty">
+<span class="category">配列</span><h2>AT_FilterMatrix</h2><p>2次元配列の指定列がキーと一致する行だけを返す。該当なしはEmpty</p>
+<p class="muted">mdlAT_Array · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">selected = AT_FilterMatrix(data, 1, &quot;A001&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FilterMatrix(ByVal data As Variant, ByVal column As Long, ByVal key As String, Optional ByVal matchCase As Boolean = False) As Variant
+    Dim selected As New Collection, row As Long, col As Long, result() As Variant, i As Long, compare As Long
+    If column &lt; LBound(data, 2) Or column &gt; UBound(data, 2) Then Err.Raise 5, &quot;AT_FilterMatrix&quot;, &quot;Invalid column.&quot;
+    If matchCase Then compare = vbBinaryCompare Else compare = vbTextCompare
+    For row = LBound(data, 1) To UBound(data, 1)
+        If Not IsError(data(row, column)) And Not IsNull(data(row, column)) Then
+            If StrComp(CStr(data(row, column)), key, compare) = 0 Then selected.Add row
+        End If
+    Next row
+    If selected.Count = 0 Then Exit Function
+    ReDim result(1 To selected.Count, 1 To UBound(data, 2) - LBound(data, 2) + 1)
+    For i = 1 To selected.Count
+        For col = LBound(data, 2) To UBound(data, 2)
+            result(i, col - LBound(data, 2) + 1) = data(selected(i), col)
+        Next col
+    Next i
+    AT_FilterMatrix = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Array.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Array.bas">VBE用ファイル</a></article><article data-search="CSV mdlAT_Csv AT_MatrixToCsv 2次元配列をCSV文字列へ変換する。引用符・カンマ・改行に対応">
+<span class="category">CSV</span><h2>AT_MatrixToCsv</h2><p>2次元配列をCSV文字列へ変換する。引用符・カンマ・改行に対応</p>
+<p class="muted">mdlAT_Csv · 依存: mdlAT_Text、mdlAT_Range、mdlAT_Files</p>
+<pre class="example">csv = AT_MatrixToCsv(data)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_MatrixToCsv(ByVal data As Variant, Optional ByVal delimiter As String = &quot;,&quot;) As String
+    Dim row As Long, column As Long, field As Variant, line As String, result As String
+    If Len(delimiter) &lt;&gt; 1 Or delimiter = &quot;&quot;&quot;&quot; Or delimiter = vbCr Or delimiter = vbLf Then Err.Raise 5, &quot;AT_MatrixToCsv&quot;, &quot;Invalid delimiter.&quot;
+    For row = LBound(data, 1) To UBound(data, 1)
+        line = &quot;&quot;
+        For column = LBound(data, 2) To UBound(data, 2)
+            field = data(row, column)
+            If IsError(field) Or IsObject(field) Or IsArray(field) Then Err.Raise 5, &quot;AT_MatrixToCsv&quot;, &quot;Invalid field at row &quot; &amp; row
+            If column &gt; LBound(data, 2) Then line = line &amp; delimiter
+            line = line &amp; AT_CsvField(AT_TextOr(field), delimiter)
+        Next column
+        If row &gt; LBound(data, 1) Then result = result &amp; vbCrLf
+        result = result &amp; line
+    Next row
+    AT_MatrixToCsv = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Csv.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Csv.bas">VBE用ファイル</a></article><article data-search="CSV mdlAT_Csv AT_ParseCsv CSV文字列を2次元配列へ変換する。空入力ならEmpty">
+<span class="category">CSV</span><h2>AT_ParseCsv</h2><p>CSV文字列を2次元配列へ変換する。空入力ならEmpty</p>
+<p class="muted">mdlAT_Csv · 依存: mdlAT_Text、mdlAT_Range、mdlAT_Files</p>
+<pre class="example">data = AT_ParseCsv(text)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ParseCsv(ByVal text As String, Optional ByVal delimiter As String = &quot;,&quot;) As Variant
+    Dim records As New Collection, fields As New Collection, result() As Variant
+    Dim value As String, quoted As Boolean, closed As Boolean, fieldStarted As Boolean
+    Dim character As String, i As Long, maxColumns As Long, row As Long, column As Long, record As Collection
+    If Len(delimiter) &lt;&gt; 1 Or delimiter = &quot;&quot;&quot;&quot; Or delimiter = vbCr Or delimiter = vbLf Then Err.Raise 5, &quot;AT_ParseCsv&quot;, &quot;Invalid delimiter.&quot;
+    If Len(text) = 0 Then Exit Function
+    &#x27; Strip a decoded Unicode BOM, if present.
+    If Left$(text, 1) = ChrW$(&amp;HFEFF) Then text = Mid$(text, 2)
+    If Len(text) = 0 Then Exit Function
+    i = 1
+    Do While i &lt;= Len(text)
+        character = Mid$(text, i, 1)
+        If quoted Then
+            If character = &quot;&quot;&quot;&quot; Then
+                If Mid$(text, i + 1, 1) = &quot;&quot;&quot;&quot; Then
+                    value = value &amp; &quot;&quot;&quot;&quot;: i = i + 1
+                Else
+                    quoted = False: closed = True
+                End If
+            Else
+                value = value &amp; character
+            End If
+        ElseIf character = delimiter Then
+            fields.Add value: value = &quot;&quot;: closed = False: fieldStarted = False
+        ElseIf character = vbCr Or character = vbLf Then
+            fields.Add value: records.Add fields
+            If fields.Count &gt; maxColumns Then maxColumns = fields.Count
+            Set fields = New Collection
+            value = &quot;&quot;: closed = False: fieldStarted = False
+            If character = vbCr And Mid$(text, i + 1, 1) = vbLf Then i = i + 1
+        ElseIf character = &quot;&quot;&quot;&quot; Then
+            If fieldStarted Or closed Then Err.Raise 5, &quot;AT_ParseCsv&quot;, &quot;Unexpected quote at position &quot; &amp; i
+            quoted = True: fieldStarted = True
+        Else
+            If closed Then Err.Raise 5, &quot;AT_ParseCsv&quot;, &quot;Unexpected text after closing quote at position &quot; &amp; i
+            value = value &amp; character: fieldStarted = True
+        End If
+        i = i + 1
+    Loop
+    If quoted Then Err.Raise 5, &quot;AT_ParseCsv&quot;, &quot;Unclosed quoted field.&quot;
+    If fields.Count &gt; 0 Or fieldStarted Or closed Or Len(value) &gt; 0 Then
+        fields.Add value: records.Add fields
+        If fields.Count &gt; maxColumns Then maxColumns = fields.Count
+    End If
+    ReDim result(1 To records.Count, 1 To maxColumns)
+    For row = 1 To records.Count
+        Set record = records(row)
+        For column = 1 To maxColumns
+            If column &lt;= record.Count Then result(row, column) = record(column) Else result(row, column) = &quot;&quot;
+        Next column
+    Next row
+    AT_ParseCsv = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Csv.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Csv.bas">VBE用ファイル</a></article><article data-search="CSV mdlAT_Csv AT_ExportRangeCsv 範囲の値をCSVとしてUTF-8で保存する。既定で上書きしない">
+<span class="category">CSV</span><h2>AT_ExportRangeCsv</h2><p>範囲の値をCSVとしてUTF-8で保存する。既定で上書きしない</p>
+<p class="muted">mdlAT_Csv · 依存: mdlAT_Text、mdlAT_Range、mdlAT_Files</p>
+<pre class="example">AT_ExportRangeCsv ws.Range(&quot;A1:D20&quot;), outputPath</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_ExportRangeCsv(ByVal source As Range, ByVal path As String, Optional ByVal overwrite As Boolean = False)
+    AT_WriteUtf8 path, AT_MatrixToCsv(AT_ReadMatrix(source)), overwrite
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Csv.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Csv.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_TryIsoDate YYYY-MM-DDを厳密に日付へ変換する。不正な日付はFalse">
+<span class="category">日付</span><h2>AT_TryIsoDate</h2><p>YYYY-MM-DDを厳密に日付へ変換する。不正な日付はFalse</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">If AT_TryIsoDate(&quot;2026-10-12&quot;, value) Then Debug.Print value</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_TryIsoDate(ByVal text As String, ByRef value As Date) As Boolean
+    Dim year As Long, month As Long, day As Long, candidate As Date
+    value = 0
+    If Not text Like &quot;####-##-##&quot; Or Len(text) &lt;&gt; 10 Then Exit Function
+    year = CLng(Left$(text, 4)): month = CLng(Mid$(text, 6, 2)): day = CLng(Right$(text, 2))
+    If year &lt; 1000 Or month &lt; 1 Or month &gt; 12 Or day &lt; 1 Or day &gt; 31 Then Exit Function
+    On Error GoTo InvalidDate
+    candidate = DateSerial(year, month, day)
+    If VBA.Year(candidate) = year And VBA.Month(candidate) = month And VBA.Day(candidate) = day Then
+        value = candidate: AT_TryIsoDate = True
+    End If
+InvalidDate:
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_MonthStart 対象月の月初を取得する">
+<span class="category">日付</span><h2>AT_MonthStart</h2><p>対象月の月初を取得する</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">first = AT_MonthStart(Date)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_MonthStart(ByVal value As Date) As Date
+    AT_MonthStart = DateSerial(Year(value), Month(value), 1)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_MonthEnd 対象月の月末を取得する">
+<span class="category">日付</span><h2>AT_MonthEnd</h2><p>対象月の月末を取得する</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">last = AT_MonthEnd(Date)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_MonthEnd(ByVal value As Date) As Date
+    AT_MonthEnd = DateSerial(Year(value), Month(value) + 1, 0)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_WeekMonday 対象週の月曜日を取得する。時刻は除く">
+<span class="category">日付</span><h2>AT_WeekMonday</h2><p>対象週の月曜日を取得する。時刻は除く</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">monday = AT_WeekMonday(Date)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_WeekMonday(ByVal value As Date) As Date
+    AT_WeekMonday = DateValue(value) - Weekday(value, vbMonday) + 1
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_DateStamp ファイル名に使える日時文字列を作る">
+<span class="category">日付</span><h2>AT_DateStamp</h2><p>ファイル名に使える日時文字列を作る</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">stamp = AT_DateStamp(Now)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_DateStamp(ByVal value As Date) As String
+    AT_DateStamp = Format$(value, &quot;yyyymmdd_hhnnss&quot;)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="日付 mdlAT_Date AT_FormatCompactDate YYYYMM・YYYYMMDD・YYYYMMDDHHMMを表示用文字列へ変換する">
+<span class="category">日付</span><h2>AT_FormatCompactDate</h2><p>YYYYMM・YYYYMMDD・YYYYMMDDHHMMを表示用文字列へ変換する</p>
+<p class="muted">mdlAT_Date · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_FormatCompactDate(&quot;202610121530&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FormatCompactDate(ByVal text As String) As String
+    Dim year As Long, month As Long, day As Long, candidate As Date, hour As Long, minute As Long
+    If Len(text) &lt;&gt; 6 And Len(text) &lt;&gt; 8 And Len(text) &lt;&gt; 12 Then Err.Raise 5, &quot;AT_FormatCompactDate&quot;, &quot;Use 6, 8 or 12 digits.&quot;
+    If text Like &quot;*[!0-9]*&quot; Then Err.Raise 5, &quot;AT_FormatCompactDate&quot;, &quot;Use digits only.&quot;
+    year = CLng(Left$(text, 4)): month = CLng(Mid$(text, 5, 2)): day = 1
+    If year &lt; 1000 Or month &lt; 1 Or month &gt; 12 Then Err.Raise 5, &quot;AT_FormatCompactDate&quot;, &quot;Invalid year or month.&quot;
+    If Len(text) &gt;= 8 Then day = CLng(Mid$(text, 7, 2))
+    candidate = DateSerial(year, month, day)
+    If VBA.Month(candidate) &lt;&gt; month Or day &lt; 1 Then Err.Raise 5, &quot;AT_FormatCompactDate&quot;, &quot;Invalid day.&quot;
+    If Len(text) = 6 Then AT_FormatCompactDate = Format$(candidate, &quot;yyyy/mm&quot;): Exit Function
+    If Len(text) = 8 Then AT_FormatCompactDate = Format$(candidate, &quot;yyyy/mm/dd&quot;): Exit Function
+    hour = CLng(Mid$(text, 9, 2)): minute = CLng(Right$(text, 2))
+    If hour &gt; 23 Or minute &gt; 59 Then Err.Raise 5, &quot;AT_FormatCompactDate&quot;, &quot;Invalid time.&quot;
+    AT_FormatCompactDate = Format$(candidate + TimeSerial(hour, minute, 0), &quot;yyyy/mm/dd hh:nn&quot;)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Date.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Date.bas">VBE用ファイル</a></article><article data-search="辞書・集計 mdlAT_Dictionary AT_NewDictionary 参照設定不要の辞書を作る。既定は大文字小文字を区別しない">
+<span class="category">辞書・集計</span><h2>AT_NewDictionary</h2><p>参照設定不要の辞書を作る。既定は大文字小文字を区別しない</p>
+<p class="muted">mdlAT_Dictionary · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set index = AT_NewDictionary()</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_NewDictionary(Optional ByVal matchCase As Boolean = False) As Object
+    Dim result As Object
+    Set result = CreateObject(&quot;Scripting.Dictionary&quot;)
+    If matchCase Then result.CompareMode = vbBinaryCompare Else result.CompareMode = vbTextCompare
+    Set AT_NewDictionary = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Dictionary.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Dictionary.bas">VBE用ファイル</a></article><article data-search="辞書・集計 mdlAT_Dictionary AT_CountValues 1次元配列の値ごとの件数を集計する。文字列として比較する">
+<span class="category">辞書・集計</span><h2>AT_CountValues</h2><p>1次元配列の値ごとの件数を集計する。文字列として比較する</p>
+<p class="muted">mdlAT_Dictionary · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set counts = AT_CountValues(Array(&quot;A&quot;, &quot;B&quot;, &quot;A&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CountValues(ByVal values As Variant, Optional ByVal matchCase As Boolean = False) As Object
+    Dim result As Object, item As Variant, key As String
+    Set result = AT_NewDictionary(matchCase)
+    For Each item In values
+        If IsError(item) Or IsNull(item) Or IsObject(item) Or IsArray(item) Then Err.Raise 5, &quot;AT_CountValues&quot;, &quot;Use scalar non-error values.&quot;
+        key = CStr(item)
+        If result.Exists(key) Then result(key) = CLng(result(key)) + 1 Else result.Add key, 1&amp;
+    Next item
+    Set AT_CountValues = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Dictionary.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Dictionary.bas">VBE用ファイル</a></article><article data-search="辞書・集計 mdlAT_Dictionary AT_IndexRows 2次元配列のキーから行番号を引ける辞書を作る。重複は既定でエラー">
+<span class="category">辞書・集計</span><h2>AT_IndexRows</h2><p>2次元配列のキーから行番号を引ける辞書を作る。重複は既定でエラー</p>
+<p class="muted">mdlAT_Dictionary · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set index = AT_IndexRows(data, 1, &quot;ERROR&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_IndexRows(ByVal data As Variant, ByVal keyColumn As Long, Optional ByVal duplicates As String = &quot;ERROR&quot;) As Object
+    Dim result As Object, row As Long, key As String, value As Variant
+    duplicates = UCase$(duplicates)
+    If duplicates &lt;&gt; &quot;ERROR&quot; And duplicates &lt;&gt; &quot;FIRST&quot; And duplicates &lt;&gt; &quot;LAST&quot; Then Err.Raise 5, &quot;AT_IndexRows&quot;, &quot;Use ERROR, FIRST or LAST.&quot;
+    If keyColumn &lt; LBound(data, 2) Or keyColumn &gt; UBound(data, 2) Then Err.Raise 5, &quot;AT_IndexRows&quot;, &quot;Invalid key column.&quot;
+    Set result = AT_NewDictionary()
+    For row = LBound(data, 1) To UBound(data, 1)
+        value = data(row, keyColumn)
+        If IsError(value) Or IsNull(value) Then Err.Raise 5, &quot;AT_IndexRows&quot;, &quot;Invalid key at row &quot; &amp; row
+        key = CStr(value)
+        If result.Exists(key) Then
+            Select Case duplicates
+                Case &quot;ERROR&quot;: Err.Raise 5, &quot;AT_IndexRows&quot;, &quot;Duplicate key: &quot; &amp; key
+                Case &quot;LAST&quot;: result(key) = row
+            End Select
+        Else
+            result.Add key, row
+        End If
+    Next row
+    Set AT_IndexRows = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Dictionary.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Dictionary.bas">VBE用ファイル</a></article><article data-search="辞書・集計 mdlAT_Dictionary AT_GroupSum キー別に数値列を合計する。空値・文字列はエラーとして知らせる">
+<span class="category">辞書・集計</span><h2>AT_GroupSum</h2><p>キー別に数値列を合計する。空値・文字列はエラーとして知らせる</p>
+<p class="muted">mdlAT_Dictionary · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set totals = AT_GroupSum(data, 1, 3)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_GroupSum(ByVal data As Variant, ByVal keyColumn As Long, ByVal valueColumn As Long) As Object
+    Dim result As Object, row As Long, key As String, value As Variant
+    If keyColumn &lt; LBound(data, 2) Or keyColumn &gt; UBound(data, 2) Then Err.Raise 5, &quot;AT_GroupSum&quot;, &quot;Invalid key column.&quot;
+    If valueColumn &lt; LBound(data, 2) Or valueColumn &gt; UBound(data, 2) Then Err.Raise 5, &quot;AT_GroupSum&quot;, &quot;Invalid value column.&quot;
+    Set result = AT_NewDictionary()
+    For row = LBound(data, 1) To UBound(data, 1)
+        value = data(row, keyColumn)
+        If IsError(value) Or IsNull(value) Then Err.Raise 5, &quot;AT_GroupSum&quot;, &quot;Invalid key at row &quot; &amp; row
+        key = CStr(value): value = data(row, valueColumn)
+        If IsError(value) Or IsNull(value) Or IsEmpty(value) Then Err.Raise 5, &quot;AT_GroupSum&quot;, &quot;Missing number at row &quot; &amp; row
+        If VarType(value) = vbBoolean Or Not IsNumeric(value) Then Err.Raise 5, &quot;AT_GroupSum&quot;, &quot;Invalid number at row &quot; &amp; row
+        If result.Exists(key) Then result(key) = CDbl(result(key)) + CDbl(value) Else result.Add key, CDbl(value)
+    Next row
+    Set AT_GroupSum = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Dictionary.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Dictionary.bas">VBE用ファイル</a></article><article data-search="辞書・集計 mdlAT_Dictionary AT_DictionaryMatrix 辞書をキー・値の2列配列へ変換する。空ならEmpty">
+<span class="category">辞書・集計</span><h2>AT_DictionaryMatrix</h2><p>辞書をキー・値の2列配列へ変換する。空ならEmpty</p>
+<p class="muted">mdlAT_Dictionary · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">data = AT_DictionaryMatrix(totals)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_DictionaryMatrix(ByVal dictionary As Object) As Variant
+    Dim result() As Variant, key As Variant, row As Long
+    If dictionary.Count = 0 Then Exit Function
+    ReDim result(1 To dictionary.Count, 1 To 2)
+    For Each key In dictionary.Keys
+        row = row + 1: result(row, 1) = key: result(row, 2) = dictionary(key)
+    Next key
+    AT_DictionaryMatrix = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Dictionary.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Dictionary.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_PauseExcel Excelの高速化設定を開始し、元の設定を保存する">
+<span class="category">Excel設定・シート</span><h2>AT_PauseExcel</h2><p>Excelの高速化設定を開始し、元の設定を保存する</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Dim state As AT_ExcelState: state = AT_PauseExcel()</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_PauseExcel() As AT_ExcelState
+    Dim state As AT_ExcelState, number As Long, message As String
+    state.ScreenUpdating = Application.ScreenUpdating
+    state.EnableEvents = Application.EnableEvents
+    state.DisplayAlerts = Application.DisplayAlerts
+    state.Calculation = Application.Calculation
+    state.StatusBar = Application.StatusBar
+    state.Captured = True
+    On Error GoTo Failed
+    Application.ScreenUpdating = False
+    Application.EnableEvents = False
+    Application.DisplayAlerts = False
+    Application.Calculation = xlCalculationManual
+    AT_PauseExcel = state
+    Exit Function
+Failed:
+    number = Err.Number: message = Err.Description
+    On Error Resume Next
+    AT_RestoreExcel state
+    On Error GoTo 0
+    Err.Raise number, &quot;AT_PauseExcel&quot;, message
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_RestoreExcel 高速化前のExcel設定に戻す。エラー処理でも呼ぶ">
+<span class="category">Excel設定・シート</span><h2>AT_RestoreExcel</h2><p>高速化前のExcel設定に戻す。エラー処理でも呼ぶ</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_RestoreExcel state</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_RestoreExcel(ByRef state As AT_ExcelState)
+    Dim number As Long, message As String
+    If Not state.Captured Then Exit Sub
+    &#x27; Restore every property, even if a particular setting is unavailable.
+    On Error Resume Next
+    Application.Calculation = state.Calculation
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.DisplayAlerts = state.DisplayAlerts
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.EnableEvents = state.EnableEvents
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.ScreenUpdating = state.ScreenUpdating
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.StatusBar = state.StatusBar
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    On Error GoTo 0
+    If number &lt;&gt; 0 Then Err.Raise number, &quot;AT_RestoreExcel&quot;, message
+    state.Captured = False
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_HasSheet ブック内にシートがあるか確認する">
+<span class="category">Excel設定・シート</span><h2>AT_HasSheet</h2><p>ブック内にシートがあるか確認する</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_HasSheet(ThisWorkbook, &quot;集計&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_HasSheet(ByVal book As Workbook, ByVal name As String) As Boolean
+    Dim sheet As Object
+    On Error Resume Next
+    Set sheet = book.Sheets(name)
+    On Error GoTo 0
+    AT_HasSheet = Not sheet Is Nothing
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_GetSheet ワークシートを取得する。必要なら作成する">
+<span class="category">Excel設定・シート</span><h2>AT_GetSheet</h2><p>ワークシートを取得する。必要なら作成する</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set ws = AT_GetSheet(ThisWorkbook, &quot;集計&quot;, True)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_GetSheet(ByVal book As Workbook, ByVal name As String, Optional ByVal create As Boolean = False) As Worksheet
+    Dim ws As Worksheet
+    On Error Resume Next
+    Set ws = book.Worksheets(name)
+    On Error GoTo 0
+    If ws Is Nothing And create Then
+        If AT_HasSheet(book, name) Then Err.Raise 5, &quot;AT_GetSheet&quot;, &quot;A non-worksheet already uses this name.&quot;
+        Set ws = book.Worksheets.Add(After:=book.Sheets(book.Sheets.Count))
+        On Error GoTo FailedName
+        ws.Name = name
+        On Error GoTo 0
+    End If
+    Set AT_GetSheet = ws
+    Exit Function
+FailedName:
+    Dim number As Long, message As String, alerts As Boolean
+    number = Err.Number: message = Err.Description
+    alerts = Application.DisplayAlerts
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    ws.Delete
+    Application.DisplayAlerts = alerts
+    On Error GoTo 0
+    Err.Raise number, &quot;AT_GetSheet&quot;, message
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_SafeSheetName シート名に使えない文字を除き、31文字までにする">
+<span class="category">Excel設定・シート</span><h2>AT_SafeSheetName</h2><p>シート名に使えない文字を除き、31文字までにする</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_SafeSheetName(&quot;売上/2026:10&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_SafeSheetName(ByVal value As String, Optional ByVal fallback As String = &quot;Sheet&quot;) As String
+    Dim mark As Variant, i As Long, result As String
+    result = value
+    For Each mark In Array(&quot;:&quot;, &quot;\&quot;, &quot;/&quot;, &quot;?&quot;, &quot;*&quot;, &quot;[&quot;, &quot;]&quot;)
+        result = Replace(result, CStr(mark), &quot;_&quot;)
+    Next mark
+    For i = 0 To 31
+        result = Replace(result, Chr$(i), &quot;&quot;)
+    Next i
+    result = Trim$(result)
+    Do While Left$(result, 1) = &quot;&#x27;&quot;
+        result = Mid$(result, 2)
+    Loop
+    Do While Right$(result, 1) = &quot;&#x27;&quot;
+        result = Left$(result, Len(result) - 1)
+    Loop
+    If Len(result) = 0 Then
+        If fallback &lt;&gt; &quot;Sheet&quot; Then result = AT_SafeSheetName(fallback, &quot;Sheet&quot;) Else result = &quot;Sheet&quot;
+    End If
+    result = Left$(result, 31)
+    Do While Right$(result, 1) = &quot;&#x27;&quot;
+        result = Left$(result, Len(result) - 1)
+    Loop
+    &#x27; History is reserved by some Excel workbook features.
+    If StrComp(result, &quot;History&quot;, vbTextCompare) = 0 Then result = &quot;History_&quot;
+    AT_SafeSheetName = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_UniqueSheetName 既存シートと重ならない名前を作る">
+<span class="category">Excel設定・シート</span><h2>AT_UniqueSheetName</h2><p>既存シートと重ならない名前を作る</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">newName = AT_UniqueSheetName(ThisWorkbook, &quot;集計&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_UniqueSheetName(ByVal book As Workbook, ByVal requested As String) As String
+    Dim base As String, candidate As String, suffix As String, i As Long
+    base = AT_SafeSheetName(requested): candidate = base
+    Do While AT_HasSheet(book, candidate)
+        i = i + 1: suffix = &quot;_&quot; &amp; CStr(i)
+        candidate = Left$(base, 31 - Len(suffix)) &amp; suffix
+    Loop
+    AT_UniqueSheetName = candidate
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_SheetNames シート名一覧をCollectionで取得する">
+<span class="category">Excel設定・シート</span><h2>AT_SheetNames</h2><p>シート名一覧をCollectionで取得する</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set names = AT_SheetNames(ThisWorkbook)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_SheetNames(ByVal book As Workbook) As Collection
+    Dim result As New Collection, sheet As Object
+    For Each sheet In book.Sheets
+        result.Add sheet.Name
+    Next sheet
+    Set AT_SheetNames = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_OpenBookByName 名前またはフルパスで、開いているブックを探す">
+<span class="category">Excel設定・シート</span><h2>AT_OpenBookByName</h2><p>名前またはフルパスで、開いているブックを探す</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set book = AT_OpenBookByName(&quot;sample.xlsx&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_OpenBookByName(ByVal nameOrPath As String) As Workbook
+    Dim book As Workbook
+    For Each book In Application.Workbooks
+        If StrComp(book.Name, nameOrPath, vbTextCompare) = 0 Or StrComp(book.FullName, nameOrPath, vbTextCompare) = 0 Then
+            Set AT_OpenBookByName = book
+            Exit Function
+        End If
+    Next book
+End Function</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="Excel設定・シート mdlAT_Excel AT_ShowProgress 状態バーへ進捗を表示する。終了時は元の設定を復元する">
+<span class="category">Excel設定・シート</span><h2>AT_ShowProgress</h2><p>状態バーへ進捗を表示する。終了時は元の設定を復元する</p>
+<p class="muted">mdlAT_Excel · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_ShowProgress 3, 10, &quot;処理中&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_ShowProgress(ByVal current As Long, ByVal total As Long, Optional ByVal message As String = &quot;処理中&quot;)
+    If total &lt;= 0 Or current &lt; 0 Or current &gt; total Then Err.Raise 5, &quot;AT_ShowProgress&quot;, &quot;Invalid progress.&quot;
+    Application.StatusBar = message &amp; &quot; &quot; &amp; current &amp; &quot;/&quot; &amp; total &amp; &quot; (&quot; &amp; Format$(current / total, &quot;0%&quot;) &amp; &quot;)&quot;
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Excel.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Excel.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_PathJoin フルパスを結合する。後半は相対パスを指定する">
+<span class="category">ファイル・フォルダ</span><h2>AT_PathJoin</h2><p>フルパスを結合する。後半は相対パスを指定する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">path = AT_PathJoin(&quot;C:\sample&quot;, &quot;data\input.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_PathJoin(ByVal folder As String, ByVal child As String) As String
+    Dim fs As Object
+    Set fs = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+    If Left$(child, 1) = &quot;\&quot; Or InStr(child, &quot;:&quot;) &gt; 0 Then Err.Raise 5, &quot;AT_PathJoin&quot;, &quot;Child must be a relative path.&quot;
+    AT_PathJoin = fs.BuildPath(folder, child)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_FileExists ファイルの存在を確認する">
+<span class="category">ファイル・フォルダ</span><h2>AT_FileExists</h2><p>ファイルの存在を確認する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">If AT_FileExists(path) Then Debug.Print path</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FileExists(ByVal path As String) As Boolean
+    AT_FileExists = CreateObject(&quot;Scripting.FileSystemObject&quot;).FileExists(path)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_FolderExists フォルダの存在を確認する">
+<span class="category">ファイル・フォルダ</span><h2>AT_FolderExists</h2><p>フォルダの存在を確認する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_FolderExists(&quot;C:\sample&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FolderExists(ByVal path As String) As Boolean
+    AT_FolderExists = CreateObject(&quot;Scripting.FileSystemObject&quot;).FolderExists(path)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_EnsureFolder 親フォルダも含めてフォルダを作る。既存なら何もしない">
+<span class="category">ファイル・フォルダ</span><h2>AT_EnsureFolder</h2><p>親フォルダも含めてフォルダを作る。既存なら何もしない</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_EnsureFolder &quot;C:\sample\output\2026&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_EnsureFolder(ByVal path As String)
+    Dim fs As Object, parent As String
+    Set fs = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+    path = fs.GetAbsolutePathName(path)
+    If fs.FolderExists(path) Then Exit Sub
+    parent = fs.GetParentFolderName(path)
+    If Len(parent) = 0 Or parent = path Then Err.Raise 76, &quot;AT_EnsureFolder&quot;, &quot;Root folder is unavailable.&quot;
+    AT_EnsureFolder parent
+    fs.CreateFolder path
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_FileName ファイル名をフルパスから取得する">
+<span class="category">ファイル・フォルダ</span><h2>AT_FileName</h2><p>ファイル名をフルパスから取得する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_FileName(&quot;C:\sample\input.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FileName(ByVal path As String) As String
+    AT_FileName = CreateObject(&quot;Scripting.FileSystemObject&quot;).GetFileName(path)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_BaseName 拡張子なしのファイル名を取得する">
+<span class="category">ファイル・フォルダ</span><h2>AT_BaseName</h2><p>拡張子なしのファイル名を取得する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_BaseName(&quot;C:\sample\input.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_BaseName(ByVal path As String) As String
+    AT_BaseName = CreateObject(&quot;Scripting.FileSystemObject&quot;).GetBaseName(path)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_Extension 拡張子を小文字で取得する。先頭のドットは含めない">
+<span class="category">ファイル・フォルダ</span><h2>AT_Extension</h2><p>拡張子を小文字で取得する。先頭のドットは含めない</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_Extension(&quot;input.CSV&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_Extension(ByVal path As String) As String
+    AT_Extension = LCase$(CreateObject(&quot;Scripting.FileSystemObject&quot;).GetExtensionName(path))
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_ParentFolder ファイルの親フォルダを取得する">
+<span class="category">ファイル・フォルダ</span><h2>AT_ParentFolder</h2><p>ファイルの親フォルダを取得する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_ParentFolder(&quot;C:\sample\input.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ParentFolder(ByVal path As String) As String
+    AT_ParentFolder = CreateObject(&quot;Scripting.FileSystemObject&quot;).GetParentFolderName(path)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_ListFiles 条件に一致するファイルをCollectionで取得する。再帰は任意">
+<span class="category">ファイル・フォルダ</span><h2>AT_ListFiles</h2><p>条件に一致するファイルをCollectionで取得する。再帰は任意</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set files = AT_ListFiles(&quot;C:\sample&quot;, &quot;*.csv&quot;, True)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ListFiles(ByVal folder As String, Optional ByVal pattern As String = &quot;*&quot;, Optional ByVal recursive As Boolean = False) As Collection
+    Dim result As New Collection, fs As Object
+    Set fs = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+    AT_FilesCollect fs.GetFolder(folder), pattern, recursive, result
+    Set AT_ListFiles = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_UniqueFilePath 既存ファイルと重ならないパスを作る。ファイル自体は作成しない">
+<span class="category">ファイル・フォルダ</span><h2>AT_UniqueFilePath</h2><p>既存ファイルと重ならないパスを作る。ファイル自体は作成しない</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">output = AT_UniqueFilePath(&quot;C:\sample\output.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_UniqueFilePath(ByVal path As String) As String
+    Dim fs As Object, stem As String, extension As String, candidate As String, i As Long
+    Set fs = CreateObject(&quot;Scripting.FileSystemObject&quot;)
+    stem = fs.BuildPath(fs.GetParentFolderName(path), fs.GetBaseName(path))
+    extension = fs.GetExtensionName(path)
+    If Len(extension) &gt; 0 Then extension = &quot;.&quot; &amp; extension
+    candidate = path
+    Do While fs.FileExists(candidate) Or fs.FolderExists(candidate)
+        i = i + 1: candidate = stem &amp; &quot;_&quot; &amp; i &amp; extension
+    Loop
+    AT_UniqueFilePath = candidate
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_CopyFile ファイルをコピーする。既定では上書きしない">
+<span class="category">ファイル・フォルダ</span><h2>AT_CopyFile</h2><p>ファイルをコピーする。既定では上書きしない</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_CopyFile sourcePath, destinationPath</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_CopyFile(ByVal source As String, ByVal destination As String, Optional ByVal overwrite As Boolean = False)
+    CreateObject(&quot;Scripting.FileSystemObject&quot;).CopyFile source, destination, overwrite
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_ReadTextFile テキストファイルを指定文字コードで読む。既定はUTF-8">
+<span class="category">ファイル・フォルダ</span><h2>AT_ReadTextFile</h2><p>テキストファイルを指定文字コードで読む。既定はUTF-8</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">text = AT_ReadTextFile(path, &quot;utf-8&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ReadTextFile(ByVal path As String, Optional ByVal charset As String = &quot;utf-8&quot;) As String
+    Dim stream As Object, number As Long, message As String
+    Set stream = CreateObject(&quot;ADODB.Stream&quot;)
+    On Error GoTo Failed
+    stream.Type = 2: stream.Charset = charset: stream.Open
+    stream.LoadFromFile path
+    AT_ReadTextFile = stream.ReadText(-1)
+    stream.Close
+    Exit Function
+Failed:
+    number = Err.Number: message = Err.Description
+    On Error Resume Next
+    stream.Close
+    On Error GoTo 0
+    Err.Raise number, &quot;AT_ReadTextFile&quot;, message
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_WriteUtf8 UTF-8でテキストを書き出す。既定はBOMなし・上書き禁止">
+<span class="category">ファイル・フォルダ</span><h2>AT_WriteUtf8</h2><p>UTF-8でテキストを書き出す。既定はBOMなし・上書き禁止</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_WriteUtf8 path, text</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_WriteUtf8(ByVal path As String, ByVal text As String, Optional ByVal overwrite As Boolean = False, Optional ByVal includeBom As Boolean = False)
+    Dim stream As Object, binary As Object, number As Long, message As String, saveMode As Long
+    Set stream = CreateObject(&quot;ADODB.Stream&quot;)
+    On Error GoTo Failed
+    If overwrite Then saveMode = 2 Else saveMode = 1
+    stream.Type = 2: stream.Charset = &quot;utf-8&quot;: stream.Open: stream.WriteText text
+    If includeBom Then
+        stream.SaveToFile path, saveMode
+    Else
+        stream.Position = 0: stream.Type = 1
+        Set binary = CreateObject(&quot;ADODB.Stream&quot;)
+        binary.Type = 1: binary.Open
+        If stream.Size &gt;= 3 Then
+            stream.Position = 3
+            If stream.Size &gt; 3 Then binary.Write stream.Read
+        End If
+        binary.SaveToFile path, saveMode
+        binary.Close
+    End If
+    stream.Close
+    Exit Sub
+Failed:
+    number = Err.Number: message = Err.Description
+    On Error Resume Next
+    stream.Close
+    If Not binary Is Nothing Then binary.Close
+    On Error GoTo 0
+    Err.Raise number, &quot;AT_WriteUtf8&quot;, message
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_SafeFileName Windowsのファイル名に使えない文字を置換する">
+<span class="category">ファイル・フォルダ</span><h2>AT_SafeFileName</h2><p>Windowsのファイル名に使えない文字を置換する</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">name = AT_SafeFileName(&quot;売上:2026/10.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_SafeFileName(ByVal name As String) As String
+    Dim mark As Variant, i As Long, stem As String, parts As Variant
+    For Each mark In Array(&quot;&lt;&quot;, &quot;&gt;&quot;, &quot;:&quot;, &quot;&quot;&quot;&quot;, &quot;/&quot;, &quot;\&quot;, &quot;|&quot;, &quot;?&quot;, &quot;*&quot;)
+        name = Replace(name, CStr(mark), &quot;_&quot;)
+    Next mark
+    For i = 0 To 31
+        name = Replace(name, Chr$(i), &quot;_&quot;)
+    Next i
+    name = Trim$(name)
+    Do While Len(name) &gt; 0
+        If Right$(name, 1) &lt;&gt; &quot;.&quot; And Right$(name, 1) &lt;&gt; &quot; &quot; Then Exit Do
+        name = Left$(name, Len(name) - 1)
+    Loop
+    If Len(name) = 0 Then name = &quot;file&quot;
+    parts = Split(name, &quot;.&quot;): stem = UCase$(parts(0))
+    If stem = &quot;CON&quot; Or stem = &quot;PRN&quot; Or stem = &quot;AUX&quot; Or stem = &quot;NUL&quot; Or stem Like &quot;COM[1-9]&quot; Or stem Like &quot;LPT[1-9]&quot; Then name = &quot;_&quot; &amp; name
+    AT_SafeFileName = name
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_ChooseFolder フォルダ選択画面を表示する。キャンセルなら空文字列">
+<span class="category">ファイル・フォルダ</span><h2>AT_ChooseFolder</h2><p>フォルダ選択画面を表示する。キャンセルなら空文字列</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">folder = AT_ChooseFolder()</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ChooseFolder(Optional ByVal title As String = &quot;フォルダを選択&quot;) As String
+    With Application.FileDialog(4)
+        .Title = title: .AllowMultiSelect = False
+        If .Show = -1 Then AT_ChooseFolder = .SelectedItems(1)
+    End With
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="ファイル・フォルダ mdlAT_Files AT_ChooseFile ファイル選択画面を表示する。キャンセルなら空文字列">
+<span class="category">ファイル・フォルダ</span><h2>AT_ChooseFile</h2><p>ファイル選択画面を表示する。キャンセルなら空文字列</p>
+<p class="muted">mdlAT_Files · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">path = AT_ChooseFile(&quot;CSV (*.csv),*.csv&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ChooseFile(Optional ByVal filter As String = &quot;All files (*.*),*.*&quot;, Optional ByVal title As String = &quot;ファイルを選択&quot;) As String
+    Dim result As Variant
+    result = Application.GetOpenFilename(FileFilter:=filter, Title:=title, MultiSelect:=False)
+    If VarType(result) &lt;&gt; vbBoolean Then AT_ChooseFile = CStr(result)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Files.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Files.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_SetAlignment セルの配置・折り返し・縮小表示を設定する">
+<span class="category">書式・丸め</span><h2>AT_SetAlignment</h2><p>セルの配置・折り返し・縮小表示を設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetAlignment ws.Range(&quot;A1:D10&quot;), xlLeft, xlCenter, True</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetAlignment(ByVal target As Range, Optional ByVal horizontal As Long = xlGeneral, _
+    Optional ByVal vertical As Long = xlBottom, Optional ByVal wrap As Boolean = False, Optional ByVal shrink As Boolean = False)
+    With target
+        .HorizontalAlignment = horizontal: .VerticalAlignment = vertical
+        .WrapText = wrap: .ShrinkToFit = shrink
+    End With
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_SetOuterBorder 範囲の外枠を設定する">
+<span class="category">書式・丸め</span><h2>AT_SetOuterBorder</h2><p>範囲の外枠を設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetOuterBorder ws.Range(&quot;A1:D10&quot;), RGB(0, 0, 0)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetOuterBorder(ByVal target As Range, Optional ByVal color As Long = 0, Optional ByVal weight As Long = xlThin)
+    Dim edge As Variant
+    For Each edge In Array(xlEdgeTop, xlEdgeBottom, xlEdgeLeft, xlEdgeRight)
+        With target.Borders(CLng(edge))
+            .LineStyle = xlContinuous: .Weight = weight: .Color = color
+        End With
+    Next edge
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_SetGridBorder セルの格子罫線を設定する">
+<span class="category">書式・丸め</span><h2>AT_SetGridBorder</h2><p>セルの格子罫線を設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetGridBorder ws.Range(&quot;A1:D10&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetGridBorder(ByVal target As Range, Optional ByVal color As Long = 0, Optional ByVal weight As Long = xlThin)
+    With target.Borders
+        .LineStyle = xlContinuous: .Weight = weight: .Color = color
+    End With
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_SetFill 塗りつぶしを設定する">
+<span class="category">書式・丸め</span><h2>AT_SetFill</h2><p>塗りつぶしを設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetFill ws.Range(&quot;A1:D1&quot;), RGB(220, 230, 240)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetFill(ByVal target As Range, ByVal color As Long)
+    target.Interior.Pattern = xlSolid: target.Interior.Color = color
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_SetFont フォントをまとめて設定する">
+<span class="category">書式・丸め</span><h2>AT_SetFont</h2><p>フォントをまとめて設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetFont ws.Range(&quot;A1:D10&quot;), &quot;游ゴシック&quot;, 11, False</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetFont(ByVal target As Range, Optional ByVal name As String = &quot;游ゴシック&quot;, _
+    Optional ByVal size As Double = 11, Optional ByVal bold As Boolean = False, Optional ByVal color As Long = 0)
+    With target.Font
+        .Name = name: .Size = size: .Bold = bold: .Color = color
+    End With
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_FormatHeader 見出し行を太字・背景色付きにする">
+<span class="category">書式・丸め</span><h2>AT_FormatHeader</h2><p>見出し行を太字・背景色付きにする</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_FormatHeader ws.Range(&quot;A1:F1&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_FormatHeader(ByVal target As Range, Optional ByVal background As Long = 15790320, Optional ByVal foreground As Long = 0)
+    target.Font.Bold = True: target.Font.Color = foreground
+    target.Interior.Pattern = xlSolid: target.Interior.Color = background
+    target.WrapText = True: target.VerticalAlignment = xlCenter
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_FormatBlock 指定範囲のフォント・背景・外枠・表示形式を一括設定する">
+<span class="category">書式・丸め</span><h2>AT_FormatBlock</h2><p>指定範囲のフォント・背景・外枠・表示形式を一括設定する</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_FormatBlock ws.Range(&quot;B2:D10&quot;), &quot;#,##0&quot;, 11</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_FormatBlock(ByVal target As Range, Optional ByVal numberFormat As String = &quot;General&quot;, Optional ByVal fontSize As Double = 11)
+    AT_SetAlignment target
+    AT_SetFont target, &quot;游ゴシック&quot;, fontSize
+    AT_SetOuterBorder target
+    target.NumberFormat = numberFormat
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="書式・丸め mdlAT_Format AT_RoundNumber 指定桁数で四捨五入・切り上げ・切り捨てする">
+<span class="category">書式・丸め</span><h2>AT_RoundNumber</h2><p>指定桁数で四捨五入・切り上げ・切り捨てする</p>
+<p class="muted">mdlAT_Format · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_RoundNumber(12.345, 2, &quot;HALF_UP&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_RoundNumber(ByVal value As Double, Optional ByVal digits As Long = 0, Optional ByVal mode As String = &quot;HALF_UP&quot;) As Double
+    Select Case UCase$(mode)
+        Case &quot;HALF_UP&quot;, &quot;ROUND_HALF_UP&quot;: AT_RoundNumber = Application.WorksheetFunction.Round(value, digits)
+        Case &quot;UP&quot;, &quot;ROUND_UP&quot;: AT_RoundNumber = Application.WorksheetFunction.RoundUp(value, digits)
+        Case &quot;DOWN&quot;, &quot;ROUND_DOWN&quot;: AT_RoundNumber = Application.WorksheetFunction.RoundDown(value, digits)
+        Case Else: Err.Raise 5, &quot;AT_RoundNumber&quot;, &quot;Use HALF_UP, UP or DOWN.&quot;
+    End Select
+End Function</pre></details>
+<a href="src/modules/mdlAT_Format.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Format.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_LastRow 値・数式が入った最終行を取得する。空なら0">
+<span class="category">検索・セル・行操作</span><h2>AT_LastRow</h2><p>値・数式が入った最終行を取得する。空なら0</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">last = AT_LastRow(ws, &quot;A&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_LastRow(ByVal ws As Worksheet, Optional ByVal column As Variant = 0) As Long
+    Dim scope As Range, found As Range
+    If VarType(column) = vbString Then
+        Set scope = ws.Columns(CStr(column))
+    ElseIf CLng(column) = 0 Then
+        Set scope = ws.Cells
+    Else
+        Set scope = ws.Columns(CLng(column))
+    End If
+    Set found = scope.Find(What:=&quot;*&quot;, After:=scope.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, _
+        SearchOrder:=xlByRows, SearchDirection:=xlPrevious, MatchCase:=False, SearchFormat:=False)
+    If Not found Is Nothing Then AT_LastRow = found.Row
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_LastColumn 値・数式が入った最終列を取得する。空なら0">
+<span class="category">検索・セル・行操作</span><h2>AT_LastColumn</h2><p>値・数式が入った最終列を取得する。空なら0</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">last = AT_LastColumn(ws, 1)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_LastColumn(ByVal ws As Worksheet, Optional ByVal row As Long = 0) As Long
+    Dim scope As Range, found As Range
+    If row = 0 Then Set scope = ws.Cells Else Set scope = ws.Rows(row)
+    Set found = scope.Find(What:=&quot;*&quot;, After:=scope.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, _
+        SearchOrder:=xlByColumns, SearchDirection:=xlPrevious, MatchCase:=False, SearchFormat:=False)
+    If Not found Is Nothing Then AT_LastColumn = found.Column
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_DataRange 指定した開始セルから最終行・列までの範囲を取得する。空ならNothing">
+<span class="category">検索・セル・行操作</span><h2>AT_DataRange</h2><p>指定した開始セルから最終行・列までの範囲を取得する。空ならNothing</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set data = AT_DataRange(ws, 2, 1)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_DataRange(ByVal ws As Worksheet, Optional ByVal firstRow As Long = 1, Optional ByVal firstColumn As Long = 1) As Range
+    Dim lastRow As Long, lastColumn As Long
+    If firstRow &lt; 1 Or firstColumn &lt; 1 Then Err.Raise 5, &quot;AT_DataRange&quot;, &quot;Invalid starting cell.&quot;
+    lastRow = AT_LastRow(ws): lastColumn = AT_LastColumn(ws)
+    If lastRow &lt; firstRow Or lastColumn &lt; firstColumn Then Exit Function
+    Set AT_DataRange = ws.Range(ws.Cells(firstRow, firstColumn), ws.Cells(lastRow, lastColumn))
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_FindCell 文字列を検索する。*や?も普通の文字として扱う">
+<span class="category">検索・セル・行操作</span><h2>AT_FindCell</h2><p>文字列を検索する。*や?も普通の文字として扱う</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set cell = AT_FindCell(ws.Range(&quot;A1:Z20&quot;), &quot;担当者&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_FindCell(ByVal scope As Range, ByVal text As String, Optional ByVal exact As Boolean = True, Optional ByVal matchCase As Boolean = False) As Range
+    Dim key As String, lookAt As Long
+    key = Replace(Replace(Replace(text, &quot;~&quot;, &quot;~~&quot;), &quot;*&quot;, &quot;~*&quot;), &quot;?&quot;, &quot;~?&quot;)
+    If exact Then lookAt = xlWhole Else lookAt = xlPart
+    Set AT_FindCell = scope.Find(What:=key, After:=scope.Cells(scope.Rows.Count, scope.Columns.Count), _
+        LookIn:=xlValues, LookAt:=lookAt, SearchOrder:=xlByRows, SearchDirection:=xlNext, MatchCase:=matchCase, SearchFormat:=False)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_HeaderColumn 見出し名から列番号を取得する。見つからなければ0">
+<span class="category">検索・セル・行操作</span><h2>AT_HeaderColumn</h2><p>見出し名から列番号を取得する。見つからなければ0</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">col = AT_HeaderColumn(ws, &quot;金額&quot;, 1)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_HeaderColumn(ByVal ws As Worksheet, ByVal name As String, Optional ByVal headerRow As Long = 1) As Long
+    Dim found As Range
+    Set found = AT_FindCell(ws.Rows(headerRow), name)
+    If Not found Is Nothing Then AT_HeaderColumn = found.Column
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_CopyValues 値だけを転記する。書式・数式はコピーしない">
+<span class="category">検索・セル・行操作</span><h2>AT_CopyValues</h2><p>値だけを転記する。書式・数式はコピーしない</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_CopyValues ws.Range(&quot;A2:D20&quot;), dst.Range(&quot;B3&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_CopyValues(ByVal source As Range, ByVal destination As Range)
+    If source.Areas.Count &lt;&gt; 1 Then Err.Raise 5, &quot;AT_CopyValues&quot;, &quot;Source must be contiguous.&quot;
+    destination.Cells(1, 1).Resize(source.Rows.Count, source.Columns.Count).Value2 = source.Value2
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_ReadMatrix セル範囲を2次元配列にする。1セルでも配列を返す">
+<span class="category">検索・セル・行操作</span><h2>AT_ReadMatrix</h2><p>セル範囲を2次元配列にする。1セルでも配列を返す</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">data = AT_ReadMatrix(ws.Range(&quot;A1:D20&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ReadMatrix(ByVal source As Range) As Variant
+    Dim oneCell(1 To 1, 1 To 1) As Variant
+    If source.Areas.Count &lt;&gt; 1 Then Err.Raise 5, &quot;AT_ReadMatrix&quot;, &quot;Source must be contiguous.&quot;
+    If source.CountLarge = 1 Then
+        oneCell(1, 1) = source.Value2: AT_ReadMatrix = oneCell
+    Else
+        AT_ReadMatrix = source.Value2
+    End If
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_WriteMatrix 2次元配列をまとめてセルに書く">
+<span class="category">検索・セル・行操作</span><h2>AT_WriteMatrix</h2><p>2次元配列をまとめてセルに書く</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_WriteMatrix dst.Range(&quot;A2&quot;), data</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_WriteMatrix(ByVal destination As Range, ByVal data As Variant)
+    Dim rows As Long, columns As Long
+    rows = UBound(data, 1) - LBound(data, 1) + 1
+    columns = UBound(data, 2) - LBound(data, 2) + 1
+    destination.Cells(1, 1).Resize(rows, columns).Value2 = data
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_UnionRange Nothingを含む2つの範囲を結合する">
+<span class="category">検索・セル・行操作</span><h2>AT_UnionRange</h2><p>Nothingを含む2つの範囲を結合する</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set allCells = AT_UnionRange(allCells, ws.Range(&quot;C3&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_UnionRange(ByVal left As Range, ByVal right As Range) As Range
+    If left Is Nothing Then
+        Set AT_UnionRange = right
+    ElseIf right Is Nothing Then
+        Set AT_UnionRange = left
+    Else
+        If Not left.Parent Is right.Parent Then Err.Raise 5, &quot;AT_UnionRange&quot;, &quot;Ranges belong to different sheets.&quot;
+        Set AT_UnionRange = Application.Union(left, right)
+    End If
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_RemoveEmptyRows 指定範囲の完全な空行を下から削除する。数式のある行は残す">
+<span class="category">検索・セル・行操作</span><h2>AT_RemoveEmptyRows</h2><p>指定範囲の完全な空行を下から削除する。数式のある行は残す</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">deleted = AT_RemoveEmptyRows(ws.Range(&quot;A2:H100&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_RemoveEmptyRows(ByVal scope As Range) As Long
+    Dim row As Long
+    If scope.Areas.Count &lt;&gt; 1 Then Err.Raise 5, &quot;AT_RemoveEmptyRows&quot;, &quot;Range must be contiguous.&quot;
+    For row = scope.Rows.Count To 1 Step -1
+        If Application.CountA(scope.Rows(row)) = 0 Then
+            scope.Rows(row).EntireRow.Delete
+            AT_RemoveEmptyRows = AT_RemoveEmptyRows + 1
+        End If
+    Next row
+End Function</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_InsertTemplateRow テンプレート行を挿入先へコピーする。値・数式・書式・行高を保持する">
+<span class="category">検索・セル・行操作</span><h2>AT_InsertTemplateRow</h2><p>テンプレート行を挿入先へコピーする。値・数式・書式・行高を保持する</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_InsertTemplateRow ws, 4, 20</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_InsertTemplateRow(ByVal ws As Worksheet, ByVal templateRow As Long, ByVal insertRow As Long)
+    Dim actualTemplate As Long
+    If templateRow &lt; 1 Or insertRow &lt; 1 Or templateRow &gt; ws.Rows.Count Or insertRow &gt; ws.Rows.Count Then Err.Raise 5, &quot;AT_InsertTemplateRow&quot;, &quot;Invalid row.&quot;
+    If templateRow = ws.Rows.Count And insertRow &lt;= templateRow Then Err.Raise 5, &quot;AT_InsertTemplateRow&quot;, &quot;The template would move outside the worksheet.&quot;
+    ws.Rows(insertRow).Insert Shift:=xlDown
+    actualTemplate = templateRow
+    If insertRow &lt;= templateRow Then actualTemplate = templateRow + 1
+    ws.Rows(actualTemplate).Copy Destination:=ws.Rows(insertRow)
+    ws.Rows(insertRow).RowHeight = ws.Rows(actualTemplate).RowHeight
+    Application.CutCopyMode = False
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="検索・セル・行操作 mdlAT_Range AT_SortRange 範囲を1列で昇順または降順に並べ替える">
+<span class="category">検索・セル・行操作</span><h2>AT_SortRange</h2><p>範囲を1列で昇順または降順に並べ替える</p>
+<p class="muted">mdlAT_Range · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SortRange ws.Range(&quot;A1:D100&quot;), 2, True, True</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SortRange(ByVal scope As Range, ByVal keyColumn As Long, Optional ByVal hasHeader As Boolean = True, Optional ByVal ascending As Boolean = True)
+    Dim direction As Long, header As Long
+    If keyColumn &lt; 1 Or keyColumn &gt; scope.Columns.Count Then Err.Raise 5, &quot;AT_SortRange&quot;, &quot;Key column is relative to the range.&quot;
+    If ascending Then direction = xlAscending Else direction = xlDescending
+    If hasHeader Then header = xlYes Else header = xlNo
+    scope.Sort Key1:=scope.Columns(keyColumn), Order1:=direction, Header:=header, Orientation:=xlTopToBottom
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Range.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Range.bas">VBE用ファイル</a></article><article data-search="図形 mdlAT_Shapes AT_CopyCallouts 吹き出しを別シートの同じ位置へ作成する">
+<span class="category">図形</span><h2>AT_CopyCallouts</h2><p>吹き出しを別シートの同じ位置へ作成する</p>
+<p class="muted">mdlAT_Shapes · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_CopyCallouts sourceSheet, targetSheet</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_CopyCallouts(ByVal source As Worksheet, ByVal destination As Worksheet)
+    Dim shape As Shape, copied As Shape
+    If source Is destination Then Err.Raise 5, &quot;AT_CopyCallouts&quot;, &quot;Source and destination must differ.&quot;
+    For Each shape In source.Shapes
+        If shape.Type = msoAutoShape Then
+            Select Case shape.AutoShapeType
+                Case msoShapeRoundedRectangularCallout, msoShapeRectangularCallout, msoShapeOvalCallout, msoShapeCloudCallout
+                    Set copied = destination.Shapes.AddShape(shape.AutoShapeType, shape.Left, shape.Top, shape.Width, shape.Height)
+                    copied.TextFrame2.TextRange.Text = shape.TextFrame2.TextRange.Text
+                    With copied.TextFrame2.TextRange.Font
+                        .Name = shape.TextFrame2.TextRange.Font.Name
+                        .Size = shape.TextFrame2.TextRange.Font.Size
+                        .Bold = shape.TextFrame2.TextRange.Font.Bold
+                        .Fill.ForeColor.RGB = shape.TextFrame2.TextRange.Font.Fill.ForeColor.RGB
+                    End With
+                    copied.Fill.Visible = shape.Fill.Visible
+                    copied.Fill.ForeColor.RGB = shape.Fill.ForeColor.RGB
+                    copied.Line.Visible = shape.Line.Visible
+                    copied.Line.ForeColor.RGB = shape.Line.ForeColor.RGB
+                    copied.Line.Weight = shape.Line.Weight
+            End Select
+        End If
+    Next shape
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Shapes.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Shapes.bas">VBE用ファイル</a></article><article data-search="図形 mdlAT_Shapes AT_AddNoteBox 指定セルの位置にメモ用テキストボックスを作る">
+<span class="category">図形</span><h2>AT_AddNoteBox</h2><p>指定セルの位置にメモ用テキストボックスを作る</p>
+<p class="muted">mdlAT_Shapes · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set note = AT_AddNoteBox(ws, ws.Range(&quot;F2&quot;), &quot;確認事項&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_AddNoteBox(ByVal ws As Worksheet, ByVal anchor As Range, ByVal text As String, _
+    Optional ByVal width As Double = 180, Optional ByVal height As Double = 80) As Shape
+    Dim result As Shape
+    If Not (anchor.Parent Is ws) Then Err.Raise 5, &quot;AT_AddNoteBox&quot;, &quot;Anchor belongs to another sheet.&quot;
+    If width &lt;= 0 Or height &lt;= 0 Then Err.Raise 5, &quot;AT_AddNoteBox&quot;, &quot;Invalid dimensions.&quot;
+    Set result = ws.Shapes.AddTextbox(msoTextOrientationHorizontal, anchor.Left, anchor.Top, width, height)
+    result.TextFrame2.TextRange.Text = text
+    result.TextFrame2.TextRange.Font.Size = 11
+    result.Fill.ForeColor.RGB = RGB(255, 255, 220)
+    Set AT_AddNoteBox = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Shapes.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Shapes.bas">VBE用ファイル</a></article><article data-search="図形 mdlAT_Shapes AT_DeleteShapesByPrefix 特定の接頭辞を持つ図形だけを削除する">
+<span class="category">図形</span><h2>AT_DeleteShapesByPrefix</h2><p>特定の接頭辞を持つ図形だけを削除する</p>
+<p class="muted">mdlAT_Shapes · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_DeleteShapesByPrefix ws, &quot;AT_Note_&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_DeleteShapesByPrefix(ByVal ws As Worksheet, ByVal prefix As String)
+    Dim i As Long
+    If Len(prefix) = 0 Then Err.Raise 5, &quot;AT_DeleteShapesByPrefix&quot;, &quot;Prefix must not be empty.&quot;
+    For i = ws.Shapes.Count To 1 Step -1
+        If StrComp(Left$(ws.Shapes(i).Name, Len(prefix)), prefix, vbTextCompare) = 0 Then ws.Shapes(i).Delete
+    Next i
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Shapes.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Shapes.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_TextOr Null・Empty・エラーを代替文字列にする">
+<span class="category">文字列・列番号</span><h2>AT_TextOr</h2><p>Null・Empty・エラーを代替文字列にする</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">name = AT_TextOr(data(1, 1), &quot;未入力&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_TextOr(ByVal value As Variant, Optional ByVal fallback As String = &quot;&quot;) As String
+    If IsError(value) Then AT_TextOr = fallback: Exit Function
+    If IsNull(value) Then AT_TextOr = fallback: Exit Function
+    If IsEmpty(value) Then AT_TextOr = fallback: Exit Function
+    AT_TextOr = CStr(value)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_NormalizeSpaces 全角スペース・タブ・連続スペースを整える">
+<span class="category">文字列・列番号</span><h2>AT_NormalizeSpaces</h2><p>全角スペース・タブ・連続スペースを整える</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">cleaned = AT_NormalizeSpaces(&quot;  A&quot; &amp; vbTab &amp; &quot;B  &quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_NormalizeSpaces(ByVal text As String) As String
+    text = Replace(Replace(text, ChrW$(&amp;H3000), &quot; &quot;), vbTab, &quot; &quot;)
+    Do While InStr(text, &quot;  &quot;) &gt; 0
+        text = Replace(text, &quot;  &quot;, &quot; &quot;)
+    Loop
+    AT_NormalizeSpaces = Trim$(text)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_NormalizeNewlines 改行コードを統一する。既定はセル内改行">
+<span class="category">文字列・列番号</span><h2>AT_NormalizeNewlines</h2><p>改行コードを統一する。既定はセル内改行</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">text = AT_NormalizeNewlines(text, vbCrLf)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_NormalizeNewlines(ByVal text As String, Optional ByVal newline As String = vbLf) As String
+    text = Replace(Replace(text, vbCrLf, vbLf), vbCr, vbLf)
+    AT_NormalizeNewlines = Replace(text, vbLf, newline)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_Contains 大文字小文字を無視して部分一致を確認する">
+<span class="category">文字列・列番号</span><h2>AT_Contains</h2><p>大文字小文字を無視して部分一致を確認する</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">If AT_Contains(fileName, &quot;売上&quot;) Then Debug.Print fileName</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_Contains(ByVal text As String, ByVal part As String, Optional ByVal matchCase As Boolean = False) As Boolean
+    Dim compare As Long
+    If matchCase Then compare = vbBinaryCompare Else compare = vbTextCompare
+    AT_Contains = InStr(1, text, part, compare) &gt; 0
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_Between 2つの区切り文字に挟まれた最初の文字列を取得する">
+<span class="category">文字列・列番号</span><h2>AT_Between</h2><p>2つの区切り文字に挟まれた最初の文字列を取得する</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">code = AT_Between(&quot;品名[ABC]&quot;, &quot;[&quot;, &quot;]&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_Between(ByVal text As String, ByVal opening As String, ByVal closing As String) As String
+    Dim first As Long, last As Long
+    If Len(opening) = 0 Or Len(closing) = 0 Then Err.Raise 5, &quot;AT_Between&quot;, &quot;Delimiters must not be empty.&quot;
+    first = InStr(1, text, opening, vbBinaryCompare)
+    If first = 0 Then Exit Function
+    first = first + Len(opening)
+    last = InStr(first, text, closing, vbBinaryCompare)
+    If last = 0 Then Exit Function
+    AT_Between = Mid$(text, first, last - first)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_PadLeft 文字列を左側から埋めて指定桁数にする">
+<span class="category">文字列・列番号</span><h2>AT_PadLeft</h2><p>文字列を左側から埋めて指定桁数にする</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">code = AT_PadLeft(&quot;7&quot;, 4, &quot;0&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_PadLeft(ByVal text As String, ByVal width As Long, Optional ByVal pad As String = &quot;0&quot;) As String
+    If width &lt; 0 Or Len(pad) &lt;&gt; 1 Then Err.Raise 5, &quot;AT_PadLeft&quot;, &quot;Invalid width or padding.&quot;
+    If Len(text) &gt;= width Then AT_PadLeft = text Else AT_PadLeft = String$(width - Len(text), pad) &amp; text
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_CombineCodeName コードと名前を指定した区切り文字で結合する">
+<span class="category">文字列・列番号</span><h2>AT_CombineCodeName</h2><p>コードと名前を指定した区切り文字で結合する</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">label = AT_CombineCodeName(&quot;001&quot;, &quot;サンプル&quot;, &quot; / &quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CombineCodeName(ByVal code As String, ByVal name As String, Optional ByVal separator As String = &quot; / &quot;) As String
+    If Len(separator) = 0 Then Err.Raise 5, &quot;AT_CombineCodeName&quot;, &quot;Separator must not be empty.&quot;
+    AT_CombineCodeName = code &amp; separator &amp; name
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_CodeFromLabel 結合した表示文字列からコードを取り出す。区切りがなければ全体を返す">
+<span class="category">文字列・列番号</span><h2>AT_CodeFromLabel</h2><p>結合した表示文字列からコードを取り出す。区切りがなければ全体を返す</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">code = AT_CodeFromLabel(&quot;001 / サンプル&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CodeFromLabel(ByVal label As String, Optional ByVal separator As String = &quot; / &quot;) As String
+    Dim position As Long
+    If Len(separator) = 0 Then Err.Raise 5, &quot;AT_CodeFromLabel&quot;, &quot;Separator must not be empty.&quot;
+    position = InStr(1, label, separator, vbBinaryCompare)
+    If position = 0 Then AT_CodeFromLabel = label Else AT_CodeFromLabel = Left$(label, position - 1)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_NameFromLabel 結合した表示文字列から名前を取り出す">
+<span class="category">文字列・列番号</span><h2>AT_NameFromLabel</h2><p>結合した表示文字列から名前を取り出す</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">name = AT_NameFromLabel(&quot;001 / サンプル&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_NameFromLabel(ByVal label As String, Optional ByVal separator As String = &quot; / &quot;) As String
+    Dim position As Long
+    If Len(separator) = 0 Then Err.Raise 5, &quot;AT_NameFromLabel&quot;, &quot;Separator must not be empty.&quot;
+    position = InStr(1, label, separator, vbBinaryCompare)
+    If position &gt; 0 Then AT_NameFromLabel = Mid$(label, position + Len(separator))
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_SplitText 複数文字の区切りにも対応して文字列を分割する。0始まり">
+<span class="category">文字列・列番号</span><h2>AT_SplitText</h2><p>複数文字の区切りにも対応して文字列を分割する。0始まり</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">parts = AT_SplitText(&quot;A||B||&quot;, &quot;||&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_SplitText(ByVal text As String, ByVal separator As String, Optional ByVal compare As Long = vbBinaryCompare) As Variant
+    If Len(separator) = 0 Then AT_SplitText = Array(text) Else AT_SplitText = Split(text, separator, -1, compare)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_ReplaceText 文字列を置換する。検索文字が空ならそのまま返す">
+<span class="category">文字列・列番号</span><h2>AT_ReplaceText</h2><p>文字列を置換する。検索文字が空ならそのまま返す</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">text = AT_ReplaceText(text, &quot;旧&quot;, &quot;新&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ReplaceText(ByVal text As String, ByVal oldText As String, ByVal newText As String, Optional ByVal compare As Long = vbBinaryCompare) As String
+    If Len(oldText) = 0 Then AT_ReplaceText = text Else AT_ReplaceText = Replace(text, oldText, newText, 1, -1, compare)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_BrToNewline HTMLのbrタグをセル内改行へ変換する">
+<span class="category">文字列・列番号</span><h2>AT_BrToNewline</h2><p>HTMLのbrタグをセル内改行へ変換する</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">text = AT_BrToNewline(&quot;A&lt;BR&gt;B&lt;br/&gt;C&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_BrToNewline(ByVal text As String) As String
+    Dim regex As Object
+    Set regex = CreateObject(&quot;VBScript.RegExp&quot;)
+    regex.Global = True: regex.IgnoreCase = True: regex.Pattern = &quot;&lt;br\s*/?&gt;&quot;
+    AT_BrToNewline = regex.Replace(text, vbLf)
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_TryNumber 数値に変換できるか確認し、変換結果を受け取る">
+<span class="category">文字列・列番号</span><h2>AT_TryNumber</h2><p>数値に変換できるか確認し、変換結果を受け取る</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">If AT_TryNumber(ws.Range(&quot;A1&quot;).Value2, amount) Then Debug.Print amount</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_TryNumber(ByVal value As Variant, ByRef number As Double) As Boolean
+    number = 0
+    If IsError(value) Or IsNull(value) Or IsEmpty(value) Or IsObject(value) Or IsArray(value) Then Exit Function
+    If VarType(value) = vbBoolean Then Exit Function
+    If Not IsNumeric(value) Then Exit Function
+    On Error GoTo Failed
+    number = CDbl(value): AT_TryNumber = True
+Failed:
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_ColumnLetter Excelの列番号をA・AA・XFD形式にする">
+<span class="category">文字列・列番号</span><h2>AT_ColumnLetter</h2><p>Excelの列番号をA・AA・XFD形式にする</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_ColumnLetter(703)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ColumnLetter(ByVal column As Long) As String
+    Dim result As String
+    If column &lt; 1 Or column &gt; 16384 Then Err.Raise 5, &quot;AT_ColumnLetter&quot;, &quot;Column must be 1..16384.&quot;
+    Do While column &gt; 0
+        column = column - 1
+        result = Chr$(65 + column Mod 26) &amp; result
+        column = column \ 26
+    Loop
+    AT_ColumnLetter = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_ColumnNumber A・AA・XFD形式の列名を列番号にする">
+<span class="category">文字列・列番号</span><h2>AT_ColumnNumber</h2><p>A・AA・XFD形式の列名を列番号にする</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_ColumnNumber(&quot;AAA&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_ColumnNumber(ByVal letters As String) As Long
+    Dim i As Long, digit As Long, result As Long
+    letters = UCase$(Trim$(letters))
+    If Len(letters) &lt; 1 Or Len(letters) &gt; 3 Then Err.Raise 5, &quot;AT_ColumnNumber&quot;, &quot;Invalid column name.&quot;
+    For i = 1 To Len(letters)
+        digit = Asc(Mid$(letters, i, 1)) - 64
+        If digit &lt; 1 Or digit &gt; 26 Then Err.Raise 5, &quot;AT_ColumnNumber&quot;, &quot;Invalid column name.&quot;
+        result = result * 26 + digit
+    Next i
+    If result &gt; 16384 Then Err.Raise 5, &quot;AT_ColumnNumber&quot;, &quot;Column exceeds XFD.&quot;
+    AT_ColumnNumber = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="文字列・列番号 mdlAT_Text AT_CsvField CSVの1フィールドをエスケープする">
+<span class="category">文字列・列番号</span><h2>AT_CsvField</h2><p>CSVの1フィールドをエスケープする</p>
+<p class="muted">mdlAT_Text · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_CsvField(&quot;A,B&quot;)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CsvField(ByVal text As String, Optional ByVal delimiter As String = &quot;,&quot;) As String
+    If Len(delimiter) &lt;&gt; 1 Then Err.Raise 5, &quot;AT_CsvField&quot;, &quot;Delimiter must be one character.&quot;
+    If InStr(text, delimiter) &gt; 0 Or InStr(text, &quot;&quot;&quot;&quot;) &gt; 0 Or InStr(text, vbCr) &gt; 0 Or InStr(text, vbLf) &gt; 0 Then
+        AT_CsvField = &quot;&quot;&quot;&quot; &amp; Replace(text, &quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;&quot;&quot;) &amp; &quot;&quot;&quot;&quot;
+    Else
+        AT_CsvField = text
+    End If
+End Function</pre></details>
+<a href="src/modules/mdlAT_Text.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Text.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_IsBlank Null・Empty・空文字か判定する。0・False・セルエラーは空扱いにしない">
+<span class="category">入力チェック</span><h2>AT_IsBlank</h2><p>Null・Empty・空文字か判定する。0・False・セルエラーは空扱いにしない</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print AT_IsBlank(ws.Range(&quot;A1&quot;).Value2)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_IsBlank(ByVal value As Variant) As Boolean
+    If IsError(value) Or IsObject(value) Or IsArray(value) Then Exit Function
+    If IsNull(value) Or IsEmpty(value) Then AT_IsBlank = True: Exit Function
+    If VarType(value) = vbString Then AT_IsBlank = Len(Trim$(CStr(value))) = 0
+End Function</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_CheckRequired 必須欄が空のセルをCollectionで返す">
+<span class="category">入力チェック</span><h2>AT_CheckRequired</h2><p>必須欄が空のセルをCollectionで返す</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set missing = AT_CheckRequired(ws.Range(&quot;B2:B100&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CheckRequired(ByVal scope As Range) As Collection
+    Dim result As New Collection, cell As Range
+    For Each cell In scope.Cells
+        If AT_IsBlank(cell.Value2) Then result.Add cell
+    Next cell
+    Set AT_CheckRequired = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_CheckDuplicates 2回目以降に現れる重複値のセルを返す。空欄は既定で無視する">
+<span class="category">入力チェック</span><h2>AT_CheckDuplicates</h2><p>2回目以降に現れる重複値のセルを返す。空欄は既定で無視する</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set duplicates = AT_CheckDuplicates(ws.Range(&quot;A2:A100&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CheckDuplicates(ByVal scope As Range, Optional ByVal ignoreBlank As Boolean = True) As Collection
+    Dim result As New Collection, seen As Object, cell As Range, value As Variant, key As String
+    Set seen = CreateObject(&quot;Scripting.Dictionary&quot;): seen.CompareMode = vbTextCompare
+    For Each cell In scope.Cells
+        value = cell.Value2
+        If IsError(value) Then
+            result.Add cell
+        ElseIf Not (ignoreBlank And AT_IsBlank(value)) Then
+            If IsNull(value) Then key = &quot;&quot; Else key = CStr(value)
+            If seen.Exists(key) Then result.Add cell Else seen.Add key, True
+        End If
+    Next cell
+    Set AT_CheckDuplicates = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_CheckNumberRange 数値範囲に入っていないセルを返す。上下限を含む">
+<span class="category">入力チェック</span><h2>AT_CheckNumberRange</h2><p>数値範囲に入っていないセルを返す。上下限を含む</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set invalid = AT_CheckNumberRange(ws.Range(&quot;C2:C100&quot;), 0, 100)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function AT_CheckNumberRange(ByVal scope As Range, ByVal minimum As Double, ByVal maximum As Double, Optional ByVal ignoreBlank As Boolean = True) As Collection
+    Dim result As New Collection, cell As Range, value As Variant, valid As Boolean, number As Double
+    If minimum &gt; maximum Then Err.Raise 5, &quot;AT_CheckNumberRange&quot;, &quot;Minimum exceeds maximum.&quot;
+    For Each cell In scope.Cells
+        value = cell.Value2
+        If Not (ignoreBlank And AT_IsBlank(value)) Then
+            valid = False
+            If Not IsError(value) And Not IsNull(value) And Not IsEmpty(value) Then
+                If VarType(value) &lt;&gt; vbBoolean And IsNumeric(value) Then
+                    On Error Resume Next
+                    Err.Clear: number = CDbl(value)
+                    If Err.Number = 0 Then valid = number &gt;= minimum And number &lt;= maximum
+                    Err.Clear
+                    On Error GoTo 0
+                End If
+            End If
+            If Not valid Then result.Add cell
+        End If
+    Next cell
+    Set AT_CheckNumberRange = result
+End Function</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_SetListValidation 入力規則のリストを設定する。名前付き範囲か短い候補一覧を渡す">
+<span class="category">入力チェック</span><h2>AT_SetListValidation</h2><p>入力規則のリストを設定する。名前付き範囲か短い候補一覧を渡す</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetListValidation ws.Range(&quot;B2:B100&quot;), &quot;=ChoiceList&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetListValidation(ByVal target As Range, ByVal formula As String, Optional ByVal allowBlank As Boolean = True)
+    If Len(formula) = 0 Or Len(formula) &gt; 255 Then Err.Raise 5, &quot;AT_SetListValidation&quot;, &quot;Use a named range for long lists.&quot;
+    With target.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:=formula
+        .IgnoreBlank = allowBlank: .InCellDropdown = True: .ShowError = True
+    End With
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_SetIntegerValidation 値のあるデータセルへ整数の入力規則を設定する">
+<span class="category">入力チェック</span><h2>AT_SetIntegerValidation</h2><p>値のあるデータセルへ整数の入力規則を設定する</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetIntegerValidation ws.Range(&quot;C2:C100&quot;), 0, 999</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetIntegerValidation(ByVal target As Range, ByVal minimum As Long, ByVal maximum As Long, Optional ByVal allowBlank As Boolean = True)
+    If minimum &gt; maximum Then Err.Raise 5, &quot;AT_SetIntegerValidation&quot;, &quot;Minimum exceeds maximum.&quot;
+    With target.Validation
+        .Delete
+        .Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:=minimum, Formula2:=maximum
+        .IgnoreBlank = allowBlank: .ShowError = True
+    End With
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="入力チェック mdlAT_Validation AT_SetLocked セルの編集可否を設定する。シート保護が有効なときに適用される">
+<span class="category">入力チェック</span><h2>AT_SetLocked</h2><p>セルの編集可否を設定する。シート保護が有効なときに適用される</p>
+<p class="muted">mdlAT_Validation · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">AT_SetLocked ws.Range(&quot;B2:D100&quot;), False</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub AT_SetLocked(ByVal target As Range, ByVal locked As Boolean)
+    target.Locked = locked
+End Sub</pre></details>
+<a href="src/modules/mdlAT_Validation.bas">UTF-8ソース</a> · <a href="vbe/modules/mdlAT_Validation.bas">VBE用ファイル</a></article><article data-search="Excel設定の管理 clsAT_AppGuard Start 高速化を開始する。クラス単体で使え、元の設定を保持する">
+<span class="category">Excel設定の管理</span><h2>Start</h2><p>高速化を開始する。クラス単体で使え、元の設定を保持する</p>
+<p class="muted">clsAT_AppGuard · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Dim guard As New clsAT_AppGuard: guard.Start</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub Start()
+    Dim number As Long, message As String
+    If captured Then Err.Raise 5, &quot;clsAT_AppGuard&quot;, &quot;Already active.&quot;
+    updating = Application.ScreenUpdating: events = Application.EnableEvents
+    alerts = Application.DisplayAlerts: calculation = Application.Calculation
+    status = Application.StatusBar: captured = True
+    On Error GoTo Failed
+    Application.ScreenUpdating = False: Application.EnableEvents = False
+    Application.DisplayAlerts = False: Application.Calculation = xlCalculationManual
+    Exit Sub
+Failed:
+    number = Err.Number: message = Err.Description
+    On Error Resume Next
+    Restore
+    On Error GoTo 0
+    Err.Raise number, &quot;clsAT_AppGuard.Start&quot;, message
+End Sub</pre></details>
+<a href="src/classes/clsAT_AppGuard.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_AppGuard.cls">VBE用ファイル</a></article><article data-search="Excel設定の管理 clsAT_AppGuard Restore 設定を明示的に復元する。参照解放時にも復元を試みる">
+<span class="category">Excel設定の管理</span><h2>Restore</h2><p>設定を明示的に復元する。参照解放時にも復元を試みる</p>
+<p class="muted">clsAT_AppGuard · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">guard.Restore: Set guard = Nothing</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub Restore()
+    Dim number As Long, message As String
+    If Not captured Then Exit Sub
+    On Error Resume Next
+    Application.Calculation = calculation
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.DisplayAlerts = alerts
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.EnableEvents = events
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.ScreenUpdating = updating
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    Application.StatusBar = status
+    If Err.Number &lt;&gt; 0 Then number = Err.Number: message = Err.Description: Err.Clear
+    On Error GoTo 0
+    If number &lt;&gt; 0 Then Err.Raise number, &quot;clsAT_AppGuard.Restore&quot;, message
+    captured = False
+End Sub</pre></details>
+<a href="src/classes/clsAT_AppGuard.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_AppGuard.cls">VBE用ファイル</a></article><article data-search="ログの管理 clsAT_Logger Attach ログ用シートを設定する。空なら見出しを作る">
+<span class="category">ログの管理</span><h2>Attach</h2><p>ログ用シートを設定する。空なら見出しを作る</p>
+<p class="muted">clsAT_Logger · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Dim logger As New clsAT_Logger: logger.Attach logSheet</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub Attach(ByVal ws As Worksheet)
+    Dim headers(1 To 1, 1 To 4) As Variant
+    If Application.CountA(ws.UsedRange) = 0 Then
+        headers(1, 1) = &quot;日時&quot;: headers(1, 2) = &quot;レベル&quot;: headers(1, 3) = &quot;処理名&quot;: headers(1, 4) = &quot;内容&quot;
+        ws.Range(&quot;A1:D1&quot;).Value2 = headers
+        ws.Range(&quot;A1:D1&quot;).Font.Bold = True
+    ElseIf ws.Range(&quot;A1&quot;).Value2 &lt;&gt; &quot;日時&quot; Or ws.Range(&quot;D1&quot;).Value2 &lt;&gt; &quot;内容&quot; Then
+        Err.Raise 5, &quot;clsAT_Logger.Attach&quot;, &quot;Choose a blank sheet or an existing log sheet.&quot;
+    End If
+    Set destination = ws
+End Sub</pre></details>
+<a href="src/classes/clsAT_Logger.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Logger.cls">VBE用ファイル</a></article><article data-search="ログの管理 clsAT_Logger WriteEntry 日時付きのログを追記する。文字列は数式として実行しない">
+<span class="category">ログの管理</span><h2>WriteEntry</h2><p>日時付きのログを追記する。文字列は数式として実行しない</p>
+<p class="muted">clsAT_Logger · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">logger.WriteEntry &quot;INFO&quot;, &quot;処理完了&quot;, &quot;集計&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub WriteEntry(ByVal level As String, ByVal message As String, Optional ByVal procedure As String = &quot;&quot;)
+    Dim last As Range, row As Long, values(1 To 1, 1 To 3) As Variant
+    If destination Is Nothing Then Err.Raise 5, &quot;clsAT_Logger.Write&quot;, &quot;Attach a log sheet first.&quot;
+    Set last = destination.Range(&quot;A:D&quot;).Find(What:=&quot;*&quot;, After:=destination.Range(&quot;A1&quot;), LookIn:=xlFormulas, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlPrevious, MatchCase:=False, SearchFormat:=False)
+    row = 2
+    If Not last Is Nothing Then row = last.Row + 1
+    If row &gt; destination.Rows.Count Then Err.Raise 6, &quot;clsAT_Logger.Write&quot;, &quot;Log sheet is full.&quot;
+    destination.Cells(row, 1).Value = Now
+    destination.Cells(row, 1).NumberFormat = &quot;yyyy/mm/dd hh:mm:ss&quot;
+    values(1, 1) = level: values(1, 2) = procedure: values(1, 3) = message
+    destination.Cells(row, 2).Resize(1, 3).NumberFormat = &quot;@&quot;
+    destination.Cells(row, 2).Resize(1, 3).Value2 = values
+End Sub</pre></details>
+<a href="src/classes/clsAT_Logger.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Logger.cls">VBE用ファイル</a></article><article data-search="ログの管理 clsAT_Logger WriteError エラー番号と内容をログに残す">
+<span class="category">ログの管理</span><h2>WriteError</h2><p>エラー番号と内容をログに残す</p>
+<p class="muted">clsAT_Logger · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">logger.WriteError Err.Number, Err.Description, &quot;集計&quot;</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub WriteError(ByVal number As Long, ByVal description As String, Optional ByVal procedure As String = &quot;&quot;)
+    WriteEntry &quot;ERROR&quot;, &quot;[&quot; &amp; CStr(number) &amp; &quot;] &quot; &amp; description, procedure
+End Sub</pre></details>
+<a href="src/classes/clsAT_Logger.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Logger.cls">VBE用ファイル</a></article><article data-search="比較条件の管理 clsAT_Rule Configure 比較条件を設定する。数値比較か文字列比較かを明示する">
+<span class="category">比較条件の管理</span><h2>Configure</h2><p>比較条件を設定する。数値比較か文字列比較かを明示する</p>
+<p class="muted">clsAT_Rule · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Dim rule As New clsAT_Rule: rule.Configure &quot;&gt;=&quot;, 0, True</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Sub Configure(ByVal comparison As String, Optional ByVal expectedValue As Variant = &quot;&quot;, _
+    Optional ByVal numericComparison As Boolean = False, Optional ByVal matchCase As Boolean = False)
+    comparison = UCase$(Trim$(comparison))
+    Select Case comparison
+        Case &quot;=&quot;, &quot;&lt;&gt;&quot;, &quot;!=&quot;, &quot;&gt;&quot;, &quot;&gt;=&quot;, &quot;&lt;&quot;, &quot;&lt;=&quot;, &quot;IS&quot;, &quot;IS NOT&quot;
+        Case Else: Err.Raise 5, &quot;clsAT_Rule.Configure&quot;, &quot;Unsupported comparison.&quot;
+    End Select
+    If comparison &lt;&gt; &quot;IS&quot; And comparison &lt;&gt; &quot;IS NOT&quot; Then
+        If IsError(expectedValue) Or IsNull(expectedValue) Or IsObject(expectedValue) Or IsArray(expectedValue) Then Err.Raise 5, &quot;clsAT_Rule.Configure&quot;, &quot;Invalid expected value.&quot;
+        If numericComparison Then
+            If IsEmpty(expectedValue) Or VarType(expectedValue) = vbBoolean Or Not IsNumeric(expectedValue) Then Err.Raise 5, &quot;clsAT_Rule.Configure&quot;, &quot;Expected value must be numeric.&quot;
+            expectedValue = CDbl(expectedValue)
+        End If
+    End If
+    operation = comparison: expected = expectedValue: numeric = numericComparison
+    If matchCase Then compare = vbBinaryCompare Else compare = vbTextCompare
+End Sub</pre></details>
+<a href="src/classes/clsAT_Rule.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Rule.cls">VBE用ファイル</a></article><article data-search="比較条件の管理 clsAT_Rule Check 1つの値が条件を満たすか判定する。エラー値や型不一致はFalse">
+<span class="category">比較条件の管理</span><h2>Check</h2><p>1つの値が条件を満たすか判定する。エラー値や型不一致はFalse</p>
+<p class="muted">clsAT_Rule · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Debug.Print rule.Check(ws.Range(&quot;C2&quot;).Value2)</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function Check(ByVal value As Variant) As Boolean
+    Dim relation As Long, blank As Boolean, number As Double
+    If Len(operation) = 0 Then Err.Raise 5, &quot;clsAT_Rule.Check&quot;, &quot;Configure the rule first.&quot;
+    If IsError(value) Or IsObject(value) Or IsArray(value) Then Exit Function
+    If IsNull(value) Or IsEmpty(value) Then
+        blank = True
+    ElseIf VarType(value) = vbString Then
+        blank = Len(Trim$(CStr(value))) = 0
+    End If
+    If operation = &quot;IS&quot; Then Check = blank: Exit Function
+    If operation = &quot;IS NOT&quot; Then Check = Not blank: Exit Function
+    If IsNull(value) Then Exit Function
+    If numeric Then
+        If blank Or VarType(value) = vbBoolean Then Exit Function
+        If Not IsNumeric(value) Then Exit Function
+        On Error GoTo InvalidValue
+        number = CDbl(value)
+        If number &lt; CDbl(expected) Then
+            relation = -1
+        ElseIf number &gt; CDbl(expected) Then
+            relation = 1
+        Else
+            relation = 0
+        End If
+    Else
+        relation = StrComp(CStr(value), CStr(expected), compare)
+    End If
+    Select Case operation
+        Case &quot;=&quot;: Check = relation = 0
+        Case &quot;&lt;&gt;&quot;, &quot;!=&quot;: Check = relation &lt;&gt; 0
+        Case &quot;&gt;&quot;: Check = relation &gt; 0
+        Case &quot;&gt;=&quot;: Check = relation &gt;= 0
+        Case &quot;&lt;&quot;: Check = relation &lt; 0
+        Case &quot;&lt;=&quot;: Check = relation &lt;= 0
+    End Select
+InvalidValue:
+End Function</pre></details>
+<a href="src/classes/clsAT_Rule.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Rule.cls">VBE用ファイル</a></article><article data-search="比較条件の管理 clsAT_Rule FindInvalid 条件を満たさないセルをCollectionで取得する">
+<span class="category">比較条件の管理</span><h2>FindInvalid</h2><p>条件を満たさないセルをCollectionで取得する</p>
+<p class="muted">clsAT_Rule · 依存: 他モジュール不要（同じファイル内の補助処理を含む）</p>
+<pre class="example">Set invalid = rule.FindInvalid(ws.Range(&quot;C2:C100&quot;))</pre><button type="button" class="copy-example">使用例をコピー</button>
+<details><summary>処理のコードを見る</summary><pre>Public Function FindInvalid(ByVal scope As Range) As Collection
+    Dim result As New Collection, cell As Range
+    For Each cell In scope.Cells
+        If Not Check(cell.Value2) Then result.Add cell
+    Next cell
+    Set FindInvalid = result
+End Function</pre></details>
+<a href="src/classes/clsAT_Rule.cls">UTF-8ソース</a> · <a href="vbe/classes/clsAT_Rule.cls">VBE用ファイル</a></article></div></main><script>const items=[...document.querySelectorAll('article')];const input=document.querySelector('input');function filter(){const terms=input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);let count=0;for(const item of items){item.hidden=!terms.every(x=>item.dataset.search.toLowerCase().includes(x));if(!item.hidden)count++;}document.querySelector('#status').textContent=count+' 件';}input.addEventListener('input',filter);filter();for(const button of document.querySelectorAll('.copy-example'))button.addEventListener('click',async()=>{const pre=button.parentElement.querySelector('.example');try{await navigator.clipboard.writeText(pre.textContent);button.textContent='コピーしました';}catch(e){const selection=getSelection();const range=document.createRange();range.selectNodeContents(pre);selection.removeAllRanges();selection.addRange(range);button.textContent='選択しました。Ctrl+Cでコピー';}});</script></html>

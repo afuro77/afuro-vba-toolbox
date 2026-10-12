@@ -1,0 +1,4 @@
+src/**/*.bas text eol=crlf
+src/**/*.cls text eol=crlf
+vbe/** -text
+*.md text eol=lf

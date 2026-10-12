@@ -1,0 +1,1014 @@
+[
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "1次元配列の要素数を取得する。空・未初期化なら0",
+    "example": "count = AT_ArrayLength(Array(\"A\", \"B\"))",
+    "name": "AT_ArrayLength",
+    "signature": "Public Function AT_ArrayLength(ByVal values As Variant) As Long",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "Collectionを0始まりの配列にする",
+    "example": "values = AT_CollectionToArray(items)",
+    "name": "AT_CollectionToArray",
+    "signature": "Public Function AT_CollectionToArray(ByVal items As Collection) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "1次元配列から重複を除く。文字列として比較する",
+    "example": "unique = AT_UniqueValues(Array(\"A\", \"a\", \"B\"))",
+    "name": "AT_UniqueValues",
+    "signature": "Public Function AT_UniqueValues(ByVal values As Variant, Optional ByVal matchCase As Boolean = False) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "1次元配列から空文字・Empty・Nullだけを除く。0は残す",
+    "example": "values = AT_FilterNonEmpty(Array(\"\", 0, \"A\"))",
+    "name": "AT_FilterNonEmpty",
+    "signature": "Public Function AT_FilterNonEmpty(ByVal values As Variant) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "2次元配列を転置する。出力は1始まり",
+    "example": "transposed = AT_TransposeMatrix(data)",
+    "name": "AT_TransposeMatrix",
+    "signature": "Public Function AT_TransposeMatrix(ByVal data As Variant) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "2次元配列から1列を取り出す。出力は1始まり",
+    "example": "codes = AT_MatrixColumn(data, 1)",
+    "name": "AT_MatrixColumn",
+    "signature": "Public Function AT_MatrixColumn(ByVal data As Variant, ByVal column As Long) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Array",
+    "category": "配列",
+    "purpose": "2次元配列の指定列がキーと一致する行だけを返す。該当なしはEmpty",
+    "example": "selected = AT_FilterMatrix(data, 1, \"A001\")",
+    "name": "AT_FilterMatrix",
+    "signature": "Public Function AT_FilterMatrix(ByVal data As Variant, ByVal column As Long, ByVal key As String, Optional ByVal matchCase As Boolean = False) As Variant",
+    "path": "src/modules/mdlAT_Array.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Csv",
+    "category": "CSV",
+    "purpose": "2次元配列をCSV文字列へ変換する。引用符・カンマ・改行に対応",
+    "example": "csv = AT_MatrixToCsv(data)",
+    "name": "AT_MatrixToCsv",
+    "signature": "Public Function AT_MatrixToCsv(ByVal data As Variant, Optional ByVal delimiter As String = \",\") As String",
+    "path": "src/modules/mdlAT_Csv.bas",
+    "dependencies": [
+      "mdlAT_Text",
+      "mdlAT_Range",
+      "mdlAT_Files"
+    ]
+  },
+  {
+    "module": "mdlAT_Csv",
+    "category": "CSV",
+    "purpose": "CSV文字列を2次元配列へ変換する。空入力ならEmpty",
+    "example": "data = AT_ParseCsv(text)",
+    "name": "AT_ParseCsv",
+    "signature": "Public Function AT_ParseCsv(ByVal text As String, Optional ByVal delimiter As String = \",\") As Variant",
+    "path": "src/modules/mdlAT_Csv.bas",
+    "dependencies": [
+      "mdlAT_Text",
+      "mdlAT_Range",
+      "mdlAT_Files"
+    ]
+  },
+  {
+    "module": "mdlAT_Csv",
+    "category": "CSV",
+    "purpose": "範囲の値をCSVとしてUTF-8で保存する。既定で上書きしない",
+    "example": "AT_ExportRangeCsv ws.Range(\"A1:D20\"), outputPath",
+    "name": "AT_ExportRangeCsv",
+    "signature": "Public Sub AT_ExportRangeCsv(ByVal source As Range, ByVal path As String, Optional ByVal overwrite As Boolean = False)",
+    "path": "src/modules/mdlAT_Csv.bas",
+    "dependencies": [
+      "mdlAT_Text",
+      "mdlAT_Range",
+      "mdlAT_Files"
+    ]
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "YYYY-MM-DDを厳密に日付へ変換する。不正な日付はFalse",
+    "example": "If AT_TryIsoDate(\"2026-10-12\", value) Then Debug.Print value",
+    "name": "AT_TryIsoDate",
+    "signature": "Public Function AT_TryIsoDate(ByVal text As String, ByRef value As Date) As Boolean",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "対象月の月初を取得する",
+    "example": "first = AT_MonthStart(Date)",
+    "name": "AT_MonthStart",
+    "signature": "Public Function AT_MonthStart(ByVal value As Date) As Date",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "対象月の月末を取得する",
+    "example": "last = AT_MonthEnd(Date)",
+    "name": "AT_MonthEnd",
+    "signature": "Public Function AT_MonthEnd(ByVal value As Date) As Date",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "対象週の月曜日を取得する。時刻は除く",
+    "example": "monday = AT_WeekMonday(Date)",
+    "name": "AT_WeekMonday",
+    "signature": "Public Function AT_WeekMonday(ByVal value As Date) As Date",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "ファイル名に使える日時文字列を作る",
+    "example": "stamp = AT_DateStamp(Now)",
+    "name": "AT_DateStamp",
+    "signature": "Public Function AT_DateStamp(ByVal value As Date) As String",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Date",
+    "category": "日付",
+    "purpose": "YYYYMM・YYYYMMDD・YYYYMMDDHHMMを表示用文字列へ変換する",
+    "example": "Debug.Print AT_FormatCompactDate(\"202610121530\")",
+    "name": "AT_FormatCompactDate",
+    "signature": "Public Function AT_FormatCompactDate(ByVal text As String) As String",
+    "path": "src/modules/mdlAT_Date.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Dictionary",
+    "category": "辞書・集計",
+    "purpose": "参照設定不要の辞書を作る。既定は大文字小文字を区別しない",
+    "example": "Set index = AT_NewDictionary()",
+    "name": "AT_NewDictionary",
+    "signature": "Public Function AT_NewDictionary(Optional ByVal matchCase As Boolean = False) As Object",
+    "path": "src/modules/mdlAT_Dictionary.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Dictionary",
+    "category": "辞書・集計",
+    "purpose": "1次元配列の値ごとの件数を集計する。文字列として比較する",
+    "example": "Set counts = AT_CountValues(Array(\"A\", \"B\", \"A\"))",
+    "name": "AT_CountValues",
+    "signature": "Public Function AT_CountValues(ByVal values As Variant, Optional ByVal matchCase As Boolean = False) As Object",
+    "path": "src/modules/mdlAT_Dictionary.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Dictionary",
+    "category": "辞書・集計",
+    "purpose": "2次元配列のキーから行番号を引ける辞書を作る。重複は既定でエラー",
+    "example": "Set index = AT_IndexRows(data, 1, \"ERROR\")",
+    "name": "AT_IndexRows",
+    "signature": "Public Function AT_IndexRows(ByVal data As Variant, ByVal keyColumn As Long, Optional ByVal duplicates As String = \"ERROR\") As Object",
+    "path": "src/modules/mdlAT_Dictionary.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Dictionary",
+    "category": "辞書・集計",
+    "purpose": "キー別に数値列を合計する。空値・文字列はエラーとして知らせる",
+    "example": "Set totals = AT_GroupSum(data, 1, 3)",
+    "name": "AT_GroupSum",
+    "signature": "Public Function AT_GroupSum(ByVal data As Variant, ByVal keyColumn As Long, ByVal valueColumn As Long) As Object",
+    "path": "src/modules/mdlAT_Dictionary.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Dictionary",
+    "category": "辞書・集計",
+    "purpose": "辞書をキー・値の2列配列へ変換する。空ならEmpty",
+    "example": "data = AT_DictionaryMatrix(totals)",
+    "name": "AT_DictionaryMatrix",
+    "signature": "Public Function AT_DictionaryMatrix(ByVal dictionary As Object) As Variant",
+    "path": "src/modules/mdlAT_Dictionary.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "Excelの高速化設定を開始し、元の設定を保存する",
+    "example": "Dim state As AT_ExcelState: state = AT_PauseExcel()",
+    "name": "AT_PauseExcel",
+    "signature": "Public Function AT_PauseExcel() As AT_ExcelState",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "高速化前のExcel設定に戻す。エラー処理でも呼ぶ",
+    "example": "AT_RestoreExcel state",
+    "name": "AT_RestoreExcel",
+    "signature": "Public Sub AT_RestoreExcel(ByRef state As AT_ExcelState)",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "ブック内にシートがあるか確認する",
+    "example": "Debug.Print AT_HasSheet(ThisWorkbook, \"集計\")",
+    "name": "AT_HasSheet",
+    "signature": "Public Function AT_HasSheet(ByVal book As Workbook, ByVal name As String) As Boolean",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "ワークシートを取得する。必要なら作成する",
+    "example": "Set ws = AT_GetSheet(ThisWorkbook, \"集計\", True)",
+    "name": "AT_GetSheet",
+    "signature": "Public Function AT_GetSheet(ByVal book As Workbook, ByVal name As String, Optional ByVal create As Boolean = False) As Worksheet",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "シート名に使えない文字を除き、31文字までにする",
+    "example": "Debug.Print AT_SafeSheetName(\"売上/2026:10\")",
+    "name": "AT_SafeSheetName",
+    "signature": "Public Function AT_SafeSheetName(ByVal value As String, Optional ByVal fallback As String = \"Sheet\") As String",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "既存シートと重ならない名前を作る",
+    "example": "newName = AT_UniqueSheetName(ThisWorkbook, \"集計\")",
+    "name": "AT_UniqueSheetName",
+    "signature": "Public Function AT_UniqueSheetName(ByVal book As Workbook, ByVal requested As String) As String",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "シート名一覧をCollectionで取得する",
+    "example": "Set names = AT_SheetNames(ThisWorkbook)",
+    "name": "AT_SheetNames",
+    "signature": "Public Function AT_SheetNames(ByVal book As Workbook) As Collection",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "名前またはフルパスで、開いているブックを探す",
+    "example": "Set book = AT_OpenBookByName(\"sample.xlsx\")",
+    "name": "AT_OpenBookByName",
+    "signature": "Public Function AT_OpenBookByName(ByVal nameOrPath As String) As Workbook",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Excel",
+    "category": "Excel設定・シート",
+    "purpose": "状態バーへ進捗を表示する。終了時は元の設定を復元する",
+    "example": "AT_ShowProgress 3, 10, \"処理中\"",
+    "name": "AT_ShowProgress",
+    "signature": "Public Sub AT_ShowProgress(ByVal current As Long, ByVal total As Long, Optional ByVal message As String = \"処理中\")",
+    "path": "src/modules/mdlAT_Excel.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "フルパスを結合する。後半は相対パスを指定する",
+    "example": "path = AT_PathJoin(\"C:\\sample\", \"data\\input.csv\")",
+    "name": "AT_PathJoin",
+    "signature": "Public Function AT_PathJoin(ByVal folder As String, ByVal child As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "ファイルの存在を確認する",
+    "example": "If AT_FileExists(path) Then Debug.Print path",
+    "name": "AT_FileExists",
+    "signature": "Public Function AT_FileExists(ByVal path As String) As Boolean",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "フォルダの存在を確認する",
+    "example": "Debug.Print AT_FolderExists(\"C:\\sample\")",
+    "name": "AT_FolderExists",
+    "signature": "Public Function AT_FolderExists(ByVal path As String) As Boolean",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "親フォルダも含めてフォルダを作る。既存なら何もしない",
+    "example": "AT_EnsureFolder \"C:\\sample\\output\\2026\"",
+    "name": "AT_EnsureFolder",
+    "signature": "Public Sub AT_EnsureFolder(ByVal path As String)",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "ファイル名をフルパスから取得する",
+    "example": "Debug.Print AT_FileName(\"C:\\sample\\input.csv\")",
+    "name": "AT_FileName",
+    "signature": "Public Function AT_FileName(ByVal path As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "拡張子なしのファイル名を取得する",
+    "example": "Debug.Print AT_BaseName(\"C:\\sample\\input.csv\")",
+    "name": "AT_BaseName",
+    "signature": "Public Function AT_BaseName(ByVal path As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "拡張子を小文字で取得する。先頭のドットは含めない",
+    "example": "Debug.Print AT_Extension(\"input.CSV\")",
+    "name": "AT_Extension",
+    "signature": "Public Function AT_Extension(ByVal path As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "ファイルの親フォルダを取得する",
+    "example": "Debug.Print AT_ParentFolder(\"C:\\sample\\input.csv\")",
+    "name": "AT_ParentFolder",
+    "signature": "Public Function AT_ParentFolder(ByVal path As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "条件に一致するファイルをCollectionで取得する。再帰は任意",
+    "example": "Set files = AT_ListFiles(\"C:\\sample\", \"*.csv\", True)",
+    "name": "AT_ListFiles",
+    "signature": "Public Function AT_ListFiles(ByVal folder As String, Optional ByVal pattern As String = \"*\", Optional ByVal recursive As Boolean = False) As Collection",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "既存ファイルと重ならないパスを作る。ファイル自体は作成しない",
+    "example": "output = AT_UniqueFilePath(\"C:\\sample\\output.csv\")",
+    "name": "AT_UniqueFilePath",
+    "signature": "Public Function AT_UniqueFilePath(ByVal path As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "ファイルをコピーする。既定では上書きしない",
+    "example": "AT_CopyFile sourcePath, destinationPath",
+    "name": "AT_CopyFile",
+    "signature": "Public Sub AT_CopyFile(ByVal source As String, ByVal destination As String, Optional ByVal overwrite As Boolean = False)",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "テキストファイルを指定文字コードで読む。既定はUTF-8",
+    "example": "text = AT_ReadTextFile(path, \"utf-8\")",
+    "name": "AT_ReadTextFile",
+    "signature": "Public Function AT_ReadTextFile(ByVal path As String, Optional ByVal charset As String = \"utf-8\") As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "UTF-8でテキストを書き出す。既定はBOMなし・上書き禁止",
+    "example": "AT_WriteUtf8 path, text",
+    "name": "AT_WriteUtf8",
+    "signature": "Public Sub AT_WriteUtf8(ByVal path As String, ByVal text As String, Optional ByVal overwrite As Boolean = False, Optional ByVal includeBom As Boolean = False)",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "Windowsのファイル名に使えない文字を置換する",
+    "example": "name = AT_SafeFileName(\"売上:2026/10.csv\")",
+    "name": "AT_SafeFileName",
+    "signature": "Public Function AT_SafeFileName(ByVal name As String) As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "フォルダ選択画面を表示する。キャンセルなら空文字列",
+    "example": "folder = AT_ChooseFolder()",
+    "name": "AT_ChooseFolder",
+    "signature": "Public Function AT_ChooseFolder(Optional ByVal title As String = \"フォルダを選択\") As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Files",
+    "category": "ファイル・フォルダ",
+    "purpose": "ファイル選択画面を表示する。キャンセルなら空文字列",
+    "example": "path = AT_ChooseFile(\"CSV (*.csv),*.csv\")",
+    "name": "AT_ChooseFile",
+    "signature": "Public Function AT_ChooseFile(Optional ByVal filter As String = \"All files (*.*),*.*\", Optional ByVal title As String = \"ファイルを選択\") As String",
+    "path": "src/modules/mdlAT_Files.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "セルの配置・折り返し・縮小表示を設定する",
+    "example": "AT_SetAlignment ws.Range(\"A1:D10\"), xlLeft, xlCenter, True",
+    "name": "AT_SetAlignment",
+    "signature": "Public Sub AT_SetAlignment(ByVal target As Range, Optional ByVal horizontal As Long = xlGeneral, _",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "範囲の外枠を設定する",
+    "example": "AT_SetOuterBorder ws.Range(\"A1:D10\"), RGB(0, 0, 0)",
+    "name": "AT_SetOuterBorder",
+    "signature": "Public Sub AT_SetOuterBorder(ByVal target As Range, Optional ByVal color As Long = 0, Optional ByVal weight As Long = xlThin)",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "セルの格子罫線を設定する",
+    "example": "AT_SetGridBorder ws.Range(\"A1:D10\")",
+    "name": "AT_SetGridBorder",
+    "signature": "Public Sub AT_SetGridBorder(ByVal target As Range, Optional ByVal color As Long = 0, Optional ByVal weight As Long = xlThin)",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "塗りつぶしを設定する",
+    "example": "AT_SetFill ws.Range(\"A1:D1\"), RGB(220, 230, 240)",
+    "name": "AT_SetFill",
+    "signature": "Public Sub AT_SetFill(ByVal target As Range, ByVal color As Long)",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "フォントをまとめて設定する",
+    "example": "AT_SetFont ws.Range(\"A1:D10\"), \"游ゴシック\", 11, False",
+    "name": "AT_SetFont",
+    "signature": "Public Sub AT_SetFont(ByVal target As Range, Optional ByVal name As String = \"游ゴシック\", _",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "見出し行を太字・背景色付きにする",
+    "example": "AT_FormatHeader ws.Range(\"A1:F1\")",
+    "name": "AT_FormatHeader",
+    "signature": "Public Sub AT_FormatHeader(ByVal target As Range, Optional ByVal background As Long = 15790320, Optional ByVal foreground As Long = 0)",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "指定範囲のフォント・背景・外枠・表示形式を一括設定する",
+    "example": "AT_FormatBlock ws.Range(\"B2:D10\"), \"#,##0\", 11",
+    "name": "AT_FormatBlock",
+    "signature": "Public Sub AT_FormatBlock(ByVal target As Range, Optional ByVal numberFormat As String = \"General\", Optional ByVal fontSize As Double = 11)",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Format",
+    "category": "書式・丸め",
+    "purpose": "指定桁数で四捨五入・切り上げ・切り捨てする",
+    "example": "Debug.Print AT_RoundNumber(12.345, 2, \"HALF_UP\")",
+    "name": "AT_RoundNumber",
+    "signature": "Public Function AT_RoundNumber(ByVal value As Double, Optional ByVal digits As Long = 0, Optional ByVal mode As String = \"HALF_UP\") As Double",
+    "path": "src/modules/mdlAT_Format.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "値・数式が入った最終行を取得する。空なら0",
+    "example": "last = AT_LastRow(ws, \"A\")",
+    "name": "AT_LastRow",
+    "signature": "Public Function AT_LastRow(ByVal ws As Worksheet, Optional ByVal column As Variant = 0) As Long",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "値・数式が入った最終列を取得する。空なら0",
+    "example": "last = AT_LastColumn(ws, 1)",
+    "name": "AT_LastColumn",
+    "signature": "Public Function AT_LastColumn(ByVal ws As Worksheet, Optional ByVal row As Long = 0) As Long",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "指定した開始セルから最終行・列までの範囲を取得する。空ならNothing",
+    "example": "Set data = AT_DataRange(ws, 2, 1)",
+    "name": "AT_DataRange",
+    "signature": "Public Function AT_DataRange(ByVal ws As Worksheet, Optional ByVal firstRow As Long = 1, Optional ByVal firstColumn As Long = 1) As Range",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "文字列を検索する。*や?も普通の文字として扱う",
+    "example": "Set cell = AT_FindCell(ws.Range(\"A1:Z20\"), \"担当者\")",
+    "name": "AT_FindCell",
+    "signature": "Public Function AT_FindCell(ByVal scope As Range, ByVal text As String, Optional ByVal exact As Boolean = True, Optional ByVal matchCase As Boolean = False) As Range",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "見出し名から列番号を取得する。見つからなければ0",
+    "example": "col = AT_HeaderColumn(ws, \"金額\", 1)",
+    "name": "AT_HeaderColumn",
+    "signature": "Public Function AT_HeaderColumn(ByVal ws As Worksheet, ByVal name As String, Optional ByVal headerRow As Long = 1) As Long",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "値だけを転記する。書式・数式はコピーしない",
+    "example": "AT_CopyValues ws.Range(\"A2:D20\"), dst.Range(\"B3\")",
+    "name": "AT_CopyValues",
+    "signature": "Public Sub AT_CopyValues(ByVal source As Range, ByVal destination As Range)",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "セル範囲を2次元配列にする。1セルでも配列を返す",
+    "example": "data = AT_ReadMatrix(ws.Range(\"A1:D20\"))",
+    "name": "AT_ReadMatrix",
+    "signature": "Public Function AT_ReadMatrix(ByVal source As Range) As Variant",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "2次元配列をまとめてセルに書く",
+    "example": "AT_WriteMatrix dst.Range(\"A2\"), data",
+    "name": "AT_WriteMatrix",
+    "signature": "Public Sub AT_WriteMatrix(ByVal destination As Range, ByVal data As Variant)",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "Nothingを含む2つの範囲を結合する",
+    "example": "Set allCells = AT_UnionRange(allCells, ws.Range(\"C3\"))",
+    "name": "AT_UnionRange",
+    "signature": "Public Function AT_UnionRange(ByVal left As Range, ByVal right As Range) As Range",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "指定範囲の完全な空行を下から削除する。数式のある行は残す",
+    "example": "deleted = AT_RemoveEmptyRows(ws.Range(\"A2:H100\"))",
+    "name": "AT_RemoveEmptyRows",
+    "signature": "Public Function AT_RemoveEmptyRows(ByVal scope As Range) As Long",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "テンプレート行を挿入先へコピーする。値・数式・書式・行高を保持する",
+    "example": "AT_InsertTemplateRow ws, 4, 20",
+    "name": "AT_InsertTemplateRow",
+    "signature": "Public Sub AT_InsertTemplateRow(ByVal ws As Worksheet, ByVal templateRow As Long, ByVal insertRow As Long)",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Range",
+    "category": "検索・セル・行操作",
+    "purpose": "範囲を1列で昇順または降順に並べ替える",
+    "example": "AT_SortRange ws.Range(\"A1:D100\"), 2, True, True",
+    "name": "AT_SortRange",
+    "signature": "Public Sub AT_SortRange(ByVal scope As Range, ByVal keyColumn As Long, Optional ByVal hasHeader As Boolean = True, Optional ByVal ascending As Boolean = True)",
+    "path": "src/modules/mdlAT_Range.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Shapes",
+    "category": "図形",
+    "purpose": "吹き出しを別シートの同じ位置へ作成する",
+    "example": "AT_CopyCallouts sourceSheet, targetSheet",
+    "name": "AT_CopyCallouts",
+    "signature": "Public Sub AT_CopyCallouts(ByVal source As Worksheet, ByVal destination As Worksheet)",
+    "path": "src/modules/mdlAT_Shapes.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Shapes",
+    "category": "図形",
+    "purpose": "指定セルの位置にメモ用テキストボックスを作る",
+    "example": "Set note = AT_AddNoteBox(ws, ws.Range(\"F2\"), \"確認事項\")",
+    "name": "AT_AddNoteBox",
+    "signature": "Public Function AT_AddNoteBox(ByVal ws As Worksheet, ByVal anchor As Range, ByVal text As String, _",
+    "path": "src/modules/mdlAT_Shapes.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Shapes",
+    "category": "図形",
+    "purpose": "特定の接頭辞を持つ図形だけを削除する",
+    "example": "AT_DeleteShapesByPrefix ws, \"AT_Note_\"",
+    "name": "AT_DeleteShapesByPrefix",
+    "signature": "Public Sub AT_DeleteShapesByPrefix(ByVal ws As Worksheet, ByVal prefix As String)",
+    "path": "src/modules/mdlAT_Shapes.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "Null・Empty・エラーを代替文字列にする",
+    "example": "name = AT_TextOr(data(1, 1), \"未入力\")",
+    "name": "AT_TextOr",
+    "signature": "Public Function AT_TextOr(ByVal value As Variant, Optional ByVal fallback As String = \"\") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "全角スペース・タブ・連続スペースを整える",
+    "example": "cleaned = AT_NormalizeSpaces(\"  A\" & vbTab & \"B  \")",
+    "name": "AT_NormalizeSpaces",
+    "signature": "Public Function AT_NormalizeSpaces(ByVal text As String) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "改行コードを統一する。既定はセル内改行",
+    "example": "text = AT_NormalizeNewlines(text, vbCrLf)",
+    "name": "AT_NormalizeNewlines",
+    "signature": "Public Function AT_NormalizeNewlines(ByVal text As String, Optional ByVal newline As String = vbLf) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "大文字小文字を無視して部分一致を確認する",
+    "example": "If AT_Contains(fileName, \"売上\") Then Debug.Print fileName",
+    "name": "AT_Contains",
+    "signature": "Public Function AT_Contains(ByVal text As String, ByVal part As String, Optional ByVal matchCase As Boolean = False) As Boolean",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "2つの区切り文字に挟まれた最初の文字列を取得する",
+    "example": "code = AT_Between(\"品名[ABC]\", \"[\", \"]\")",
+    "name": "AT_Between",
+    "signature": "Public Function AT_Between(ByVal text As String, ByVal opening As String, ByVal closing As String) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "文字列を左側から埋めて指定桁数にする",
+    "example": "code = AT_PadLeft(\"7\", 4, \"0\")",
+    "name": "AT_PadLeft",
+    "signature": "Public Function AT_PadLeft(ByVal text As String, ByVal width As Long, Optional ByVal pad As String = \"0\") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "コードと名前を指定した区切り文字で結合する",
+    "example": "label = AT_CombineCodeName(\"001\", \"サンプル\", \" / \")",
+    "name": "AT_CombineCodeName",
+    "signature": "Public Function AT_CombineCodeName(ByVal code As String, ByVal name As String, Optional ByVal separator As String = \" / \") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "結合した表示文字列からコードを取り出す。区切りがなければ全体を返す",
+    "example": "code = AT_CodeFromLabel(\"001 / サンプル\")",
+    "name": "AT_CodeFromLabel",
+    "signature": "Public Function AT_CodeFromLabel(ByVal label As String, Optional ByVal separator As String = \" / \") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "結合した表示文字列から名前を取り出す",
+    "example": "name = AT_NameFromLabel(\"001 / サンプル\")",
+    "name": "AT_NameFromLabel",
+    "signature": "Public Function AT_NameFromLabel(ByVal label As String, Optional ByVal separator As String = \" / \") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "複数文字の区切りにも対応して文字列を分割する。0始まり",
+    "example": "parts = AT_SplitText(\"A||B||\", \"||\")",
+    "name": "AT_SplitText",
+    "signature": "Public Function AT_SplitText(ByVal text As String, ByVal separator As String, Optional ByVal compare As Long = vbBinaryCompare) As Variant",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "文字列を置換する。検索文字が空ならそのまま返す",
+    "example": "text = AT_ReplaceText(text, \"旧\", \"新\")",
+    "name": "AT_ReplaceText",
+    "signature": "Public Function AT_ReplaceText(ByVal text As String, ByVal oldText As String, ByVal newText As String, Optional ByVal compare As Long = vbBinaryCompare) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "HTMLのbrタグをセル内改行へ変換する",
+    "example": "text = AT_BrToNewline(\"A<BR>B<br/>C\")",
+    "name": "AT_BrToNewline",
+    "signature": "Public Function AT_BrToNewline(ByVal text As String) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "数値に変換できるか確認し、変換結果を受け取る",
+    "example": "If AT_TryNumber(ws.Range(\"A1\").Value2, amount) Then Debug.Print amount",
+    "name": "AT_TryNumber",
+    "signature": "Public Function AT_TryNumber(ByVal value As Variant, ByRef number As Double) As Boolean",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "Excelの列番号をA・AA・XFD形式にする",
+    "example": "Debug.Print AT_ColumnLetter(703)",
+    "name": "AT_ColumnLetter",
+    "signature": "Public Function AT_ColumnLetter(ByVal column As Long) As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "A・AA・XFD形式の列名を列番号にする",
+    "example": "Debug.Print AT_ColumnNumber(\"AAA\")",
+    "name": "AT_ColumnNumber",
+    "signature": "Public Function AT_ColumnNumber(ByVal letters As String) As Long",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Text",
+    "category": "文字列・列番号",
+    "purpose": "CSVの1フィールドをエスケープする",
+    "example": "Debug.Print AT_CsvField(\"A,B\")",
+    "name": "AT_CsvField",
+    "signature": "Public Function AT_CsvField(ByVal text As String, Optional ByVal delimiter As String = \",\") As String",
+    "path": "src/modules/mdlAT_Text.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "Null・Empty・空文字か判定する。0・False・セルエラーは空扱いにしない",
+    "example": "Debug.Print AT_IsBlank(ws.Range(\"A1\").Value2)",
+    "name": "AT_IsBlank",
+    "signature": "Public Function AT_IsBlank(ByVal value As Variant) As Boolean",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "必須欄が空のセルをCollectionで返す",
+    "example": "Set missing = AT_CheckRequired(ws.Range(\"B2:B100\"))",
+    "name": "AT_CheckRequired",
+    "signature": "Public Function AT_CheckRequired(ByVal scope As Range) As Collection",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "2回目以降に現れる重複値のセルを返す。空欄は既定で無視する",
+    "example": "Set duplicates = AT_CheckDuplicates(ws.Range(\"A2:A100\"))",
+    "name": "AT_CheckDuplicates",
+    "signature": "Public Function AT_CheckDuplicates(ByVal scope As Range, Optional ByVal ignoreBlank As Boolean = True) As Collection",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "数値範囲に入っていないセルを返す。上下限を含む",
+    "example": "Set invalid = AT_CheckNumberRange(ws.Range(\"C2:C100\"), 0, 100)",
+    "name": "AT_CheckNumberRange",
+    "signature": "Public Function AT_CheckNumberRange(ByVal scope As Range, ByVal minimum As Double, ByVal maximum As Double, Optional ByVal ignoreBlank As Boolean = True) As Collection",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "入力規則のリストを設定する。名前付き範囲か短い候補一覧を渡す",
+    "example": "AT_SetListValidation ws.Range(\"B2:B100\"), \"=ChoiceList\"",
+    "name": "AT_SetListValidation",
+    "signature": "Public Sub AT_SetListValidation(ByVal target As Range, ByVal formula As String, Optional ByVal allowBlank As Boolean = True)",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "値のあるデータセルへ整数の入力規則を設定する",
+    "example": "AT_SetIntegerValidation ws.Range(\"C2:C100\"), 0, 999",
+    "name": "AT_SetIntegerValidation",
+    "signature": "Public Sub AT_SetIntegerValidation(ByVal target As Range, ByVal minimum As Long, ByVal maximum As Long, Optional ByVal allowBlank As Boolean = True)",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "mdlAT_Validation",
+    "category": "入力チェック",
+    "purpose": "セルの編集可否を設定する。シート保護が有効なときに適用される",
+    "example": "AT_SetLocked ws.Range(\"B2:D100\"), False",
+    "name": "AT_SetLocked",
+    "signature": "Public Sub AT_SetLocked(ByVal target As Range, ByVal locked As Boolean)",
+    "path": "src/modules/mdlAT_Validation.bas",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_AppGuard",
+    "category": "Excel設定の管理",
+    "purpose": "高速化を開始する。クラス単体で使え、元の設定を保持する",
+    "example": "Dim guard As New clsAT_AppGuard: guard.Start",
+    "name": "Start",
+    "signature": "Public Sub Start()",
+    "path": "src/classes/clsAT_AppGuard.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_AppGuard",
+    "category": "Excel設定の管理",
+    "purpose": "設定を明示的に復元する。参照解放時にも復元を試みる",
+    "example": "guard.Restore: Set guard = Nothing",
+    "name": "Restore",
+    "signature": "Public Sub Restore()",
+    "path": "src/classes/clsAT_AppGuard.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Logger",
+    "category": "ログの管理",
+    "purpose": "ログ用シートを設定する。空なら見出しを作る",
+    "example": "Dim logger As New clsAT_Logger: logger.Attach logSheet",
+    "name": "Attach",
+    "signature": "Public Sub Attach(ByVal ws As Worksheet)",
+    "path": "src/classes/clsAT_Logger.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Logger",
+    "category": "ログの管理",
+    "purpose": "日時付きのログを追記する。文字列は数式として実行しない",
+    "example": "logger.WriteEntry \"INFO\", \"処理完了\", \"集計\"",
+    "name": "WriteEntry",
+    "signature": "Public Sub WriteEntry(ByVal level As String, ByVal message As String, Optional ByVal procedure As String = \"\")",
+    "path": "src/classes/clsAT_Logger.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Logger",
+    "category": "ログの管理",
+    "purpose": "エラー番号と内容をログに残す",
+    "example": "logger.WriteError Err.Number, Err.Description, \"集計\"",
+    "name": "WriteError",
+    "signature": "Public Sub WriteError(ByVal number As Long, ByVal description As String, Optional ByVal procedure As String = \"\")",
+    "path": "src/classes/clsAT_Logger.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Rule",
+    "category": "比較条件の管理",
+    "purpose": "比較条件を設定する。数値比較か文字列比較かを明示する",
+    "example": "Dim rule As New clsAT_Rule: rule.Configure \">=\", 0, True",
+    "name": "Configure",
+    "signature": "Public Sub Configure(ByVal comparison As String, Optional ByVal expectedValue As Variant = \"\", _",
+    "path": "src/classes/clsAT_Rule.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Rule",
+    "category": "比較条件の管理",
+    "purpose": "1つの値が条件を満たすか判定する。エラー値や型不一致はFalse",
+    "example": "Debug.Print rule.Check(ws.Range(\"C2\").Value2)",
+    "name": "Check",
+    "signature": "Public Function Check(ByVal value As Variant) As Boolean",
+    "path": "src/classes/clsAT_Rule.cls",
+    "dependencies": []
+  },
+  {
+    "module": "clsAT_Rule",
+    "category": "比較条件の管理",
+    "purpose": "条件を満たさないセルをCollectionで取得する",
+    "example": "Set invalid = rule.FindInvalid(ws.Range(\"C2:C100\"))",
+    "name": "FindInvalid",
+    "signature": "Public Function FindInvalid(ByVal scope As Range) As Collection",
+    "path": "src/classes/clsAT_Rule.cls",
+    "dependencies": []
+  }
+]
